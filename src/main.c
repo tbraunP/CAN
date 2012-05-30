@@ -1,23 +1,10 @@
-/**
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-//#define CLIENT_ONLY
-/** @addtogroup STM32F4xx_StdPeriph_Examples
- * @{
- */
+#define CLIENT_ONLY
 
-/** @addtogroup CAN_Networking
- * @{
- */
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
 #define KEY_PRESSED     0x00
 #define KEY_NOT_PRESSED 0x01
 
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
 CAN_InitTypeDef CAN_InitStructure;
 CAN_FilterInitTypeDef CAN_FilterInitStructure;
 CanTxMsg TxMessage;
@@ -27,15 +14,9 @@ uint8_t KeyNumber = 0x0;
 void NVIC_Config(void);
 void CAN_Config(void);
 void Init_RxMes(CanRxMsg *RxMessage);
+void Init_TxMes(CanTxMsg *TxMessage);
 void Delay(void);
 
-/* Private functions ---------------------------------------------------------*/
-
-/**
- * @brief  Main program.
- * @param  None
- * @retval None
- */
 int main(void) {
 	/*!< At this stage the microcontroller clock setting is already configured,
 	 this is done through SystemInit() function which is called from startup
@@ -72,14 +53,14 @@ int main(void) {
 //
 #ifndef CLIENT_ONLY
 		STM_EVAL_LEDOn(LED5);
-		TxMessage.Data[0] = KeyNumber;
+		//TxMessage.Data[0] = KeyNumber;
 		uint8_t mailbox = CAN_Transmit(CANx, &TxMessage);
 		KeyNumber++;
 
 		uint8_t result = CAN_TxStatus_Pending;
 		while ((result = CAN_TransmitStatus(CANx, mailbox))
 				== CAN_TxStatus_Pending)
-		;
+			;
 		Delay();
 #endif
 		for (int i = 0; i < 1000; i++)
@@ -160,12 +141,24 @@ void CAN_Config(void) {
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
 	/* Transmit Structure preparation */
-	TxMessage.StdId = 0x321;
-	TxMessage.ExtId = 0x01;
+	Init_TxMes(&TxMessage);
+//	TxMessage.StdId = 0x007;
+//	TxMessage.ExtId = 0x00;
+//	TxMessage.RTR = CAN_RTR_REMOTE;
+//	TxMessage.IDE = CAN_ID_STD;
+//	TxMessage.DLC = 0;
+
+	TxMessage.StdId = 20;
+	TxMessage.ExtId = 0x00;
 	TxMessage.RTR = CAN_RTR_DATA;
 	TxMessage.IDE = CAN_ID_STD;
-	TxMessage.DLC = 1;
+	TxMessage.DLC = 4;
 
+	//Data
+	TxMessage.Data[0] = 0x3f;
+	TxMessage.Data[1] = 0x80;
+	TxMessage.Data[2] = 0x00;
+	TxMessage.Data[3] = 0x00;
 	/* Enable FIFO 0 message pending Interrupt */
 	CAN_ITConfig(CANx, CAN_IT_FMP0, ENABLE);
 }
@@ -205,6 +198,18 @@ void Init_RxMes(CanRxMsg *RxMessage) {
 	RxMessage->FMI = 0;
 	for (i = 0; i < 8; i++) {
 		RxMessage->Data[i] = 0x00;
+	}
+}
+
+void Init_TxMes(CanTxMsg *TxMessage) {
+	uint8_t i = 0;
+
+	TxMessage->StdId = 0x00;
+	TxMessage->ExtId = 0x00;
+	TxMessage->IDE = CAN_ID_STD;
+	TxMessage->DLC = 0;
+	for (i = 0; i < 8; i++) {
+		TxMessage->Data[i] = 0x00;
 	}
 }
 
@@ -276,16 +281,11 @@ void assert_failed(uint8_t* file, uint32_t line)
 #endif
 
 /**
- * @}
+ * Stubs
  */
 void EVAL_AUDIO_TransferComplete_CallBack(uint32_t pBuffer, uint32_t Size) {
 }
 
 uint16_t EVAL_AUDIO_GetSampleCallBack(void) {
+	return 0;
 }
-
-/**
- * @}
- */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
