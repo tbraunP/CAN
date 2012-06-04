@@ -1,6 +1,6 @@
 #include "main.h"
+#include "config.h"
 
-#define CLIENT_ONLY
 
 #define KEY_PRESSED     0x00
 #define KEY_NOT_PRESSED 0x01
@@ -148,17 +148,21 @@ void CAN_Config(void) {
 //	TxMessage.IDE = CAN_ID_STD;
 //	TxMessage.DLC = 0;
 
-	TxMessage.StdId = 20;
+	TxMessage.StdId = CANID;
 	TxMessage.ExtId = 0x00;
 	TxMessage.RTR = CAN_RTR_DATA;
 	TxMessage.IDE = CAN_ID_STD;
-	TxMessage.DLC = 4;
+	TxMessage.DLC = DATALEN;
 
 	//Data
-	TxMessage.Data[0] = 0x3f;
-	TxMessage.Data[1] = 0x80;
-	TxMessage.Data[2] = 0x00;
-	TxMessage.Data[3] = 0x00;
+	TxMessage.Data[0] = DATA0;
+	TxMessage.Data[1] = DATA1;
+	TxMessage.Data[2] = DATA2;
+	TxMessage.Data[3] = DATA3;
+	TxMessage.Data[4] = DATA4;
+	TxMessage.Data[5] = DATA5;
+	TxMessage.Data[6] = DATA6;
+	TxMessage.Data[7] = DATA7;
 	/* Enable FIFO 0 message pending Interrupt */
 	CAN_ITConfig(CANx, CAN_IT_FMP0, ENABLE);
 }

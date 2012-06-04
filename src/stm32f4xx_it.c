@@ -30,6 +30,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
 #include "main.h"
+#include "config.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
  * @{
@@ -167,7 +168,7 @@ void CAN1_RX0_IRQHandler(void) {
 	Init_RxMes(&RxMessage);
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
-	if ((RxMessage.StdId == 20)&&(RxMessage.IDE == CAN_ID_STD)){
+	if ((RxMessage.StdId == CANID)&&(RxMessage.IDE == CAN_ID_STD) && (RxMessage.DLC == DATALEN)){
 	//if ((RxMessage.StdId == 0x007) && (RxMessage.IDE == CAN_ID_STD) && (RxMessage.RTR == CAN_RTR_REMOTE)
 	//		&& (RxMessage.DLC == 0)) {
 		//LED_Display(RxMessage.Data[0]);
