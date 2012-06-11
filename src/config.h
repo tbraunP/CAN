@@ -11,6 +11,13 @@
 // role
 //#define CLIENT_ONLY
 
+// Definition of client
+#ifndef CLIENT_ONLY
+	#define MASTER
+#else
+	#define SLAVE
+#endif
+
 // Can Config
 #define CANID  41
 #define DATALEN 8

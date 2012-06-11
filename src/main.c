@@ -1,6 +1,7 @@
 #include "main.h"
 #include "config.h"
-
+#include "master/master_io.h"
+#include "slave/slave_io.h"
 
 #define KEY_PRESSED     0x00
 #define KEY_NOT_PRESSED 0x01
@@ -27,6 +28,12 @@ int main(void) {
 
 	/* NVIC configuration */
 	NVIC_Config();
+
+#ifdef MASTER
+	GPIO_Master_init();
+#else
+	GPIO_Slave_init();
+#endif
 
 	/* Configures LED 1..4 */
 	STM_EVAL_LEDInit(LED5);
@@ -83,7 +90,6 @@ void CAN_Config(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* CAN GPIOs configuration **************************************************/
-
 	/* Enable GPIO clock */
 	RCC_AHB1PeriphClockCmd(CAN_GPIO_CLK, ENABLE);
 
@@ -181,10 +187,21 @@ void NVIC_Config(void) {
 	NVIC_InitStructure.NVIC_IRQChannel = CAN2_RX0_IRQn;
 #endif /* USE_CAN1 */
 
+#ifdef MASTER
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
+#else
+	// pin toggeling is more important to slave
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
+#endif
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+
+#ifdef MASTER
+	NVIC_Master_Config();
+#else
+	// no further init needed
+#endif
 }
 
 /**
