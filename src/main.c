@@ -48,6 +48,11 @@ int main(void) {
 	CAN_Config();
 
 	/* Infinite loop */
+#ifdef MASTER
+	master_main();
+#else
+	slave_main();
+#endif
 	while (1) {
 //    while(STM_EVAL_PBGetState(BUTTON_USER) == KEY_PRESSED)
 //    {

@@ -201,6 +201,9 @@ void CAN2_RX0_IRQHandler(void)
 /**
  * @}
  */
+void EXTI4_IRQHandler(void){
+
+}
 
 /**
  * @}
