@@ -6,6 +6,10 @@
  */
 #include "master_timer.h"
 
+void Timer_init(void){
+
+}
+
 void Timer_startTimer(void){
 
 }
