@@ -202,7 +202,11 @@ void CAN2_RX0_IRQHandler(void)
  * @}
  */
 void EXTI4_IRQHandler(void){
+	// TODO
+}
 
+void TIM2_IRQHandler(void){
+	//TODO
 }
 
 /**

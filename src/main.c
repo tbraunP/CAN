@@ -201,12 +201,6 @@ void NVIC_Config(void) {
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-
-#ifdef MASTER
-	NVIC_Master_Config();
-#else
-	// no further init needed
-#endif
 }
 
 /**
