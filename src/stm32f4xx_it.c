@@ -31,6 +31,7 @@
 #include "stm32f4xx_it.h"
 #include "main.h"
 #include "config.h"
+#include "master/master_report.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
  * @{
@@ -163,50 +164,50 @@ void Init_TxMes(CanTxMsg *TxMessage);
  * @param  None
  * @retval None
  */
+uint8_t entry = 0;
+uint8_t led = 0;
+
 void CAN1_RX0_IRQHandler(void) {
-	static uint8_t led = 0;
+#ifdef MASTER
+	uint32_t timestamp = TIM2->CNT;
+
+	// handle reception
 	Init_RxMes(&RxMessage);
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
-	if ((RxMessage.StdId == CANID)&&(RxMessage.IDE == CAN_ID_STD) && (RxMessage.DLC == DATALEN)){
-	//if ((RxMessage.StdId == 0x007) && (RxMessage.IDE == CAN_ID_STD) && (RxMessage.RTR == CAN_RTR_REMOTE)
-	//		&& (RxMessage.DLC == 0)) {
-		//LED_Display(RxMessage.Data[0]);
-		//KeyNumber = RxMessage.Data[0];
-		LED_Display(led);
-		if(led++ >=4 )
-			led = 0;
-	}
+	// not processing starts
+	uint32_t timestamp2 = TIM2->CNT;
+
+	// signalize reception
+	LED_Display(led);
+	if (led++ >= 4)
+		led = 0;
+
+	// store report
+	report[entry].id = RxMessage.StdId;
+	report[entry].time = timestamp;
+	report[entry].timeProc = timestamp2;
+
+	// check if cycle has been finished -> transmit report
+	if (entry++ == 4)
+		reportCreated = 1;
+#endif
 }
 #endif  /* USE_CAN1 */
-
-#ifdef USE_CAN2
-/**
- * @brief  This function handles CAN2 RX0 request.
- * @param  None
- * @retval None
- */
-void CAN2_RX0_IRQHandler(void)
-{
-	CAN_Receive(CAN2, CAN_FIFO0, &RxMessage);
-
-	if ((RxMessage.StdId == 0x321)&&(RxMessage.IDE == CAN_ID_STD) && (RxMessage.DLC == 1))
-	{
-		LED_Display(RxMessage.Data[0]);
-		KeyNumber = RxMessage.Data[0];
-	}
-}
-#endif  /* USE_CAN2 */
 
 /**
  * @}
  */
-void EXTI4_IRQHandler(void){
+void EXTI4_IRQHandler(void) {
 	// TODO
 }
 
-void TIM2_IRQHandler(void){
-	//TODO
+extern volatile uint8_t overflow;
+
+void TIM2_IRQHandler(void) {
+	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+	overflow = 1;
+	STM_EVAL_LEDToggle(LED6);
 }
 
 /**

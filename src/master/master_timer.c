@@ -16,12 +16,14 @@ void Timer_init(void) {
 	// Definition of base
 	TIM_TimeBaseStructInit(&TIM_TimeBaseInitStruct);
 	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInitStruct.TIM_Period = 0x00; // reload value
-	//TIM_TimeBaseInitStruct.TIM_Prescaler = (uint16_t) ((SystemCoreClock / 4)
-	//		/ TICKPERSECONDS) - 1;
-	// prescaler 1
-	TIM_TimeBaseInitStruct.TIM_Prescaler = 0;
 
+	// overflow value
+	TIM_TimeBaseInitStruct.TIM_Period = 20 * 96000000;
+
+	// prescaler - none, use full speed (SystemCoreClock/2)
+	TIM_TimeBaseInitStruct.TIM_Prescaler = 0;
+	// 10000 khz
+	//TIM_TimeBaseInitStruct.TIM_Prescaler = (uint16_t) ((SystemCoreClock / 2) / 10000000) - 1;
 	TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInit(TIM2,&TIM_TimeBaseInitStruct);
 
@@ -43,8 +45,8 @@ void Timer_startTimer(void) {
 
 void Timer_stopTimer(void){
 	TIM_Cmd(TIM2, DISABLE);
-	TIM_DeInit(TIM2);
-	TIM2->CNT = 0x00;
-	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStruct);
-	TIM_ITConfig(TIM2,TIM_IT_Update, ENABLE);
+	//TIM_DeInit(TIM2);
+	//TIM2->CNT = 0x00;
+	//TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStruct);
+	//TIM_ITConfig(TIM2,TIM_IT_Update, ENABLE);
 }
