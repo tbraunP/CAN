@@ -9,40 +9,44 @@
 #include "master_timer.h"
 #include "master_uart.h"
 #include "stm32f4_discovery.h"
+#include "master_report.h"
 
 #include <stdint.h>
 #include <string.h>
+//#include <stdio.h>
 
 volatile uint8_t overflow = 0;
 
-void master_main(void){
-
+void master_main(void) {
 	Timer_init();
 	UART_init();
 
 	UART_StrSend("# MasterNode up\n");
+	int i=0;
 
-	while(1){
+	while (1) {
 		// notify nodes
-		GPIO_Master_SignalizeStart();
 		STM_EVAL_LEDOn(LED5);
+		GPIO_Master_SignalizeStart();
 		Timer_startTimer();
 
-		//UART_send((const uint8_t*) text, strlen(text));
+		// wait for alle message to be received
+		while (!reportCreated) {
+			if (overflow) {
+				UART_StrSend("# Experiment timeout\n");
+				while(1);
+			}
+		}
 
-		// wait for overlow, toggle pin
-		while(!overflow);
-
-
-		Timer_stopTimer();
-		overflow = 0;
+		// Stop Timer and start signal
 		GPIO_Master_SignalizeReset();
-		STM_EVAL_LEDOff(LED5);
-		Timer_startTimer();
-
-		// wait for next overflow
-		while(!overflow);
 		Timer_stopTimer();
+
+		// reset state
 		overflow = 0;
+		reportCreated = 0;
+		i++;
+
+		// transmit report via uart
 	}
 }

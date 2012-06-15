@@ -28,6 +28,7 @@ void Timer_init(void) {
 	TIM_TimeBaseInit(TIM2,&TIM_TimeBaseInitStruct);
 
 	// Enable overflow interrupt
+	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	TIM_ITConfig(TIM2,TIM_IT_Update, ENABLE);
 
 	// Configure Interrupt
