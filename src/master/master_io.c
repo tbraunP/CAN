@@ -33,3 +33,4 @@ void GPIO_Master_SignalizeStart(void) {
 void GPIO_Master_SignalizeReset(void) {
 	GPIOA->BSRRH |= (1<<15);
 }
+

@@ -6,6 +6,6 @@
  */
 #include "master_report.h"
 
-volatile Report_t report[4];
+volatile Report_t report[MAXREPORTS];
 
 volatile uint8_t reportCreated = 0;

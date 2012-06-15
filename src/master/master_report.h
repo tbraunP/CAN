@@ -10,6 +10,8 @@
 
 #include <stdint.h>
 
+#define MAXREPORTS	(4)
+
 typedef struct Report_t{
 	uint32_t id;
 	uint32_t time;
@@ -17,7 +19,7 @@ typedef struct Report_t{
 } Report_t;
 
 // report array for id 20, 30, 40, 41
-extern volatile Report_t report[4];
+extern volatile Report_t report[MAXREPORTS];
 
 extern volatile uint8_t reportCreated;
 

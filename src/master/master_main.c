@@ -10,10 +10,13 @@
 #include "master_uart.h"
 #include "stm32f4_discovery.h"
 #include "master_report.h"
+#include "common/itoa.h"
 
 #include <stdint.h>
 #include <string.h>
-//#include <stdio.h>
+
+
+void printReport(void);
 
 volatile uint8_t overflow = 0;
 
@@ -22,7 +25,6 @@ void master_main(void) {
 	UART_init();
 
 	UART_StrSend("# MasterNode up\n");
-	int i=0;
 
 	while (1) {
 		// notify nodes
@@ -34,7 +36,8 @@ void master_main(void) {
 		while (!reportCreated) {
 			if (overflow) {
 				UART_StrSend("# Experiment timeout\n");
-				while(1);
+				while (1)
+					;
 			}
 		}
 
@@ -45,8 +48,19 @@ void master_main(void) {
 		// reset state
 		overflow = 0;
 		reportCreated = 0;
-		i++;
 
-		// transmit report via uart
+		// transmit report via UART
+		printReport();
+	}
+}
+
+void printReport(void) {
+	for (int i = 0; i < MAXREPORTS; i++) {
+		UART_StrSend(itoa(report[i].id));
+		UART_StrSend(" ; ");
+		UART_StrSend(itoa(report[i].time));
+		UART_StrSend(" ; ");
+		UART_StrSend(itoa(report[i].timeProc));
+		UART_StrSend("\n");
 	}
 }

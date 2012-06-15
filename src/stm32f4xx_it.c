@@ -189,8 +189,11 @@ void CAN1_RX0_IRQHandler(void) {
 	report[entry].timeProc = timestamp2;
 
 	// check if cycle has been finished -> transmit report
-	if (entry++ == 4)
+	++entry;
+	if (entry == MAXREPORTS){
 		reportCreated = 1;
+		entry = 0;
+	}
 #endif
 }
 #endif  /* USE_CAN1 */
