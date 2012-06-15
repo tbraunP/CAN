@@ -28,10 +28,13 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_it.h"
 #include "main.h"
 #include "config.h"
 #include "master/master_report.h"
+
+#include "stm32f4xx.h"
+#include "stm32f4xx_conf.h"
+
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
  * @{
@@ -201,8 +204,11 @@ void CAN1_RX0_IRQHandler(void) {
 /**
  * @}
  */
+extern volatile uint8_t canGo;
+
 void EXTI4_IRQHandler(void) {
-	// TODO
+	EXTI_ClearITPendingBit(EXTI_Line15);
+	canGo = 1;
 }
 
 extern volatile uint8_t overflow;
@@ -210,7 +216,7 @@ extern volatile uint8_t overflow;
 void TIM2_IRQHandler(void) {
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	overflow = 1;
-	STM_EVAL_LEDToggle(LED6);
+	STM_EVAL_LEDOn(LED6);
 }
 
 /**

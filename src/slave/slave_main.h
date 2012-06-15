@@ -7,6 +7,9 @@
 
 #ifndef SLAVE_MAIN_H_
 #define SLAVE_MAIN_H_
+#include <stdint.h>
+
+extern volatile uint8_t canGo;
 
 void slave_main(void);
 

@@ -25,6 +25,7 @@ void UART_init(void) {
 	GPIO_Init(GPIOA, &gpioInit);
 
 	// configure uart
+	USART_DeInit(USART2);
 	USART_InitTypeDef uartInit;
 	USART_StructInit(&uartInit);
 	uartInit.USART_BaudRate = 115200;

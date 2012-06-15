@@ -1,21 +1,17 @@
 #include "main.h"
 #include "config.h"
 #include "master/master_io.h"
+#include "master/master_main.h"
+
 #include "slave/slave_io.h"
+#include "slave/slave_main.h"
 
-#define KEY_PRESSED     0x00
-#define KEY_NOT_PRESSED 0x01
 
-CAN_InitTypeDef CAN_InitStructure;
-CAN_FilterInitTypeDef CAN_FilterInitStructure;
-CanTxMsg TxMessage;
-uint8_t KeyNumber = 0x0;
+
 
 /* Private function prototypes -----------------------------------------------*/
 void NVIC_Config(void);
 void CAN_Config(void);
-void Init_RxMes(CanRxMsg *RxMessage);
-void Init_TxMes(CanTxMsg *TxMessage);
 void Delay(void);
 
 int main(void) {
@@ -54,19 +50,10 @@ int main(void) {
 	slave_main();
 #endif
 	while (1) {
-//    while(STM_EVAL_PBGetState(BUTTON_USER) == KEY_PRESSED)
-//    {
-		if (KeyNumber == 0x4) {
-			KeyNumber = 0x00;
-		}
-//      else
-//      {
-//        LED_Display(++KeyNumber);
-//
-#ifndef CLIENT_ONLY
+	#ifndef CLIENT_ONLY
 		STM_EVAL_LEDOn(LED5);
 		//TxMessage.Data[0] = KeyNumber;
-		uint8_t mailbox = CAN_Transmit(CANx, &TxMessage);
+
 		KeyNumber++;
 
 		uint8_t result = CAN_TxStatus_Pending;
@@ -93,6 +80,8 @@ int main(void) {
  */
 void CAN_Config(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
+	CAN_InitTypeDef CAN_InitStructure;
+	CAN_FilterInitTypeDef CAN_FilterInitStructure;
 
 	/* CAN GPIOs configuration **************************************************/
 	/* Enable GPIO clock */
@@ -151,31 +140,10 @@ void CAN_Config(void) {
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
-	/* Transmit Structure preparation */
-	Init_TxMes(&TxMessage);
-//	TxMessage.StdId = 0x007;
-//	TxMessage.ExtId = 0x00;
-//	TxMessage.RTR = CAN_RTR_REMOTE;
-//	TxMessage.IDE = CAN_ID_STD;
-//	TxMessage.DLC = 0;
-
-	TxMessage.StdId = CANID;
-	TxMessage.ExtId = 0x00;
-	TxMessage.RTR = CAN_RTR_DATA;
-	TxMessage.IDE = CAN_ID_STD;
-	TxMessage.DLC = DATALEN;
-
-	//Data
-	TxMessage.Data[0] = DATA0;
-	TxMessage.Data[1] = DATA1;
-	TxMessage.Data[2] = DATA2;
-	TxMessage.Data[3] = DATA3;
-	TxMessage.Data[4] = DATA4;
-	TxMessage.Data[5] = DATA5;
-	TxMessage.Data[6] = DATA6;
-	TxMessage.Data[7] = DATA7;
+#ifdef MASTER
 	/* Enable FIFO 0 message pending Interrupt */
 	CAN_ITConfig(CANx, CAN_IT_FMP0, ENABLE);
+#endif
 }
 
 /**
@@ -184,6 +152,7 @@ void CAN_Config(void) {
  * @retval None
  */
 void NVIC_Config(void) {
+#ifdef MASTER
 	NVIC_InitTypeDef NVIC_InitStructure;
 
 #ifdef  USE_CAN1 
@@ -192,46 +161,14 @@ void NVIC_Config(void) {
 	NVIC_InitStructure.NVIC_IRQChannel = CAN2_RX0_IRQn;
 #endif /* USE_CAN1 */
 
-#ifdef MASTER
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
-#else
-	// pin toggeling is more important to slave
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
-#endif
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+#endif
 }
 
-/**
- * @brief  Initializes the Rx Message.
- * @param  RxMessage: pointer to the message to initialize
- * @retval None
- */
-void Init_RxMes(CanRxMsg *RxMessage) {
-	uint8_t i = 0;
 
-	RxMessage->StdId = 0x00;
-	RxMessage->ExtId = 0x00;
-	RxMessage->IDE = CAN_ID_STD;
-	RxMessage->DLC = 0;
-	RxMessage->FMI = 0;
-	for (i = 0; i < 8; i++) {
-		RxMessage->Data[i] = 0x00;
-	}
-}
-
-void Init_TxMes(CanTxMsg *TxMessage) {
-	uint8_t i = 0;
-
-	TxMessage->StdId = 0x00;
-	TxMessage->ExtId = 0x00;
-	TxMessage->IDE = CAN_ID_STD;
-	TxMessage->DLC = 0;
-	for (i = 0; i < 8; i++) {
-		TxMessage->Data[i] = 0x00;
-	}
-}
 
 /**
  * @brief  Turn ON/OFF the dedicated led
