@@ -20,20 +20,19 @@ void master_main(void){
 	Timer_init();
 	UART_init();
 
-	const char* text = "Hallo World\n";
-	UART_send((const uint8_t*) text, strlen(text));
+	UART_StrSend("# MasterNode up\n");
+
 	while(1){
 		// notify nodes
 		GPIO_Master_SignalizeStart();
 		STM_EVAL_LEDOn(LED5);
 		Timer_startTimer();
 
-		UART_send((const uint8_t*) text, strlen(text));
+		//UART_send((const uint8_t*) text, strlen(text));
 
 		// wait for overlow, toggle pin
-		while(!overflow){
-			UART_send((const uint8_t*) text, strlen(text));
-		}
+		while(!overflow);
+
 
 		Timer_stopTimer();
 		overflow = 0;

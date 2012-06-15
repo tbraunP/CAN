@@ -46,5 +46,19 @@ void UART_send(const uint8_t* data, int len) {
 		USART2->DR = data[i];
 
 	}
+}
 
+void UART_StrSend(const char *data) {
+	// wait for last transmission finished
+	//  i.e. TC=1
+	while (!(USART2->SR & (1 << 6)))
+		;
+
+	while (*data) {
+		// TXE=1
+		while ((USART2->SR & (1 << 7)) == 0)
+			;
+
+		USART2->DR = *(data++);
+	}
 }

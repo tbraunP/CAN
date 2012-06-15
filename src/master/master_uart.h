@@ -14,4 +14,6 @@ void UART_init(void);
 
 void UART_send( const uint8_t* data, int len);
 
+void UART_StrSend(const char *data);
+
 #endif /* MASTER_UART_H_ */
