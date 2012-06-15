@@ -36,6 +36,7 @@ void master_main(void) {
 		while (!reportCreated) {
 			if (overflow) {
 				UART_StrSend("# Experiment timeout\n");
+				printReport();
 				while (1)
 					;
 			}
