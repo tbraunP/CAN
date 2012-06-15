@@ -23,11 +23,11 @@ void GPIO_Slave_init(void) {
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	//configure as external interrupt source
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource15);
-
 	// no external triggers
 	EXTI_DeInit();
+
+	//configure as external interrupt source
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource15);
 
 	// Enable triggers
 	EXTI_InitTypeDef EXTI_InitStruct;
@@ -41,7 +41,7 @@ void GPIO_Slave_init(void) {
 	// Enable Interrupts
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn; // since pin 15 is used
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn; // since pin 15 is used
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;

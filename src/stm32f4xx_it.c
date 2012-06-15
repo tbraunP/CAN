@@ -35,7 +35,6 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
 
-
 /** @addtogroup STM32F4xx_StdPeriph_Examples
  * @{
  */
@@ -184,7 +183,7 @@ void CAN1_RX0_IRQHandler(void) {
 	// signalize reception
 	LED_Display(led);
 	if (led++ >= 4)
-		led = 0;
+	led = 0;
 
 	// store report
 	report[entry].id = RxMessage.StdId;
@@ -193,7 +192,7 @@ void CAN1_RX0_IRQHandler(void) {
 
 	// check if cycle has been finished -> transmit report
 	++entry;
-	if (entry == MAXREPORTS){
+	if (entry == MAXREPORTS) {
 		reportCreated = 1;
 		entry = 0;
 	}
@@ -205,6 +204,11 @@ void CAN1_RX0_IRQHandler(void) {
  * @}
  */
 extern volatile uint8_t canGo;
+
+void EXTI15_10_IRQHandler(void) {
+	EXTI_ClearITPendingBit(EXTI_Line15);
+	canGo = 1;
+}
 
 void EXTI4_IRQHandler(void) {
 	EXTI_ClearITPendingBit(EXTI_Line15);
