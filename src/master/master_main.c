@@ -21,7 +21,7 @@ void master_main(void){
 	UART_init();
 
 	const char* text = "Hallo World\n";
-
+	UART_send((const uint8_t*) text, strlen(text));
 	while(1){
 		// notify nodes
 		GPIO_Master_SignalizeStart();
@@ -32,6 +32,7 @@ void master_main(void){
 
 		// wait for overlow, toggle pin
 		while(!overflow){
+			UART_send((const uint8_t*) text, strlen(text));
 		}
 
 		Timer_stopTimer();
