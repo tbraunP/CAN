@@ -15,6 +15,7 @@
 #include "sendTasks.h"
 
 volatile uint8_t canGo = 0;
+
 CanTxMsg TxMessage1;
 CanTxMsg TxMessage2;
 
@@ -31,6 +32,8 @@ void slave_main(void){
 	while(1){
 		// wait for go
 		while(!canGo);
+
+		STM_EVAL_LEDOn(LED6);
 
 		// send CAN message
 		TxMessage1.DLC = tasks[i].payloadSize;
@@ -60,6 +63,7 @@ void slave_main(void){
 		}
 
 		// reset
+		STM_EVAL_LEDOff(LED6);
 		canGo = 0;
 	}
 }

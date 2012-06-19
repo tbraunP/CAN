@@ -9,25 +9,19 @@
 #define CONFIG_H_
 
 // role
-//#define CLIENT_ONLY
+#define CLIENT_ONLY
 
 // Definition of client
 #ifndef CLIENT_ONLY
 	#define MASTER
 #else
 	#define SLAVE
-#endif
 
-// Can Config
-#define CANID  41
-#define DATALEN 8
-#define	DATA0 0x41
-#define	DATA1 0x5e
-#define DATA2 0x70
-#define DATA3 0xa2
-#define DATA4 0x41
-#define DATA5 0xcf
-#define DATA6 0xfb
-#define DATA7 0x3c
+	// chose device to simulate
+	#define ABSSENSOR
+	//#define HYDRO
+	//#define ABS
+
+#endif
 
 #endif /* CONFIG_H_ */

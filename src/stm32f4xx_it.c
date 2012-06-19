@@ -210,11 +210,6 @@ void EXTI15_10_IRQHandler(void) {
 	canGo = 1;
 }
 
-void EXTI4_IRQHandler(void) {
-	EXTI_ClearITPendingBit(EXTI_Line15);
-	canGo = 1;
-}
-
 extern volatile uint8_t overflow;
 
 void TIM2_IRQHandler(void) {
