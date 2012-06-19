@@ -32,7 +32,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 //#include "stm324xg_eval.h"
-#include "stm32f4_discovery.h"
+#include "util/stm32f4_discovery.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

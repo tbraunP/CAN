@@ -7,7 +7,7 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
-#include "stm32f4_discovery.h"
+#include "util/stm32f4_discovery.h"
 
 #include "slave_main.h"
 #include "main.h"

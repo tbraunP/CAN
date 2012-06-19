@@ -8,7 +8,7 @@
 #include "master_io.h"
 #include "master_timer.h"
 #include "master_uart.h"
-#include "stm32f4_discovery.h"
+#include "util/stm32f4_discovery.h"
 #include "master_report.h"
 #include "common/itoa.h"
 

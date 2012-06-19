@@ -6,9 +6,6 @@
 #include "slave/slave_io.h"
 #include "slave/slave_main.h"
 
-
-
-
 /* Private function prototypes -----------------------------------------------*/
 void NVIC_Config(void);
 void CAN_Config(void);
@@ -49,28 +46,7 @@ int main(void) {
 #else
 	slave_main();
 #endif
-	while (1) {
-	#ifndef CLIENT_ONLY
-		STM_EVAL_LEDOn(LED5);
-		//TxMessage.Data[0] = KeyNumber;
 
-		KeyNumber++;
-
-		uint8_t result = CAN_TxStatus_Pending;
-		while ((result = CAN_TransmitStatus(CANx, mailbox))
-				== CAN_TxStatus_Pending)
-			;
-		Delay();
-#endif
-		for (int i = 0; i < 1000; i++)
-			Delay();
-
-//        while(STM_EVAL_PBGetState(BUTTON_USER) != KEY_NOT_PRESSED)
-//        {
-//        }
-//      }
-//    }
-	}
 }
 
 /**
@@ -167,8 +143,6 @@ void NVIC_Config(void) {
 	NVIC_Init(&NVIC_InitStructure);
 #endif
 }
-
-
 
 /**
  * @brief  Turn ON/OFF the dedicated led
