@@ -8,11 +8,14 @@
 #include <stdint.h>
 #include "../config.h"
 
-uint8_t TWO_MES_PER_ITERATION = 2; // 1 -> 2 Messages pro toggle aus tasks entnehmen
-
+#ifdef ABSSENSOR
+uint8_t TWO_MES_PER_ITERATION = 1; // 1 -> 2 Messages pro toggle aus tasks entnehmen
+#else
+uint8_t TWO_MES_PER_ITERATION = 0;
+#endif
 
 // number of tasks
-#if 0
+#ifdef MASTER
 int MAXENTRIES = 2;
 
 // definition of send tasks

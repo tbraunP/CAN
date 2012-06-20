@@ -4,6 +4,7 @@
  *  Created on: Jun 12, 2012
  *      Author: braun
  */
+#include "config.h"
 #include "master_timer.h"
 #include "stm32f4xx_conf.h"
 
@@ -18,8 +19,12 @@ void Timer_init(void) {
 	TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 
 	// overflow value
-	TIM_TimeBaseInitStruct.TIM_Period = 20 * 96000000;
-
+#ifdef CALIBRATE_ONLY
+	// timer clock -> (SystemCoreClock/2) MHz -> ((SystemCoreClock/2)/8) s
+	TIM_TimeBaseInitStruct.TIM_Period = ((SystemCoreClock/2)/8);
+#else
+	TIM_TimeBaseInitStruct.TIM_Period = 20 * (SystemCoreClock/2);
+#endif
 	// prescaler - none, use full speed (SystemCoreClock/2)
 	TIM_TimeBaseInitStruct.TIM_Prescaler = 0;
 	// 10000 khz
@@ -46,8 +51,6 @@ void Timer_startTimer(void) {
 
 void Timer_stopTimer(void){
 	TIM_Cmd(TIM2, DISABLE);
-	//TIM_DeInit(TIM2);
-	//TIM2->CNT = 0x00;
-	//TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStruct);
-	//TIM_ITConfig(TIM2,TIM_IT_Update, ENABLE);
+	TIM2->CNT = 0x00;
+	TIM_ClearITPendingBit(TIM2, TIM_IT_Update); // be sure
 }

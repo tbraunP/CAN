@@ -14,8 +14,8 @@ extern int MAXENTRIES;
 extern uint8_t TWO_MES_PER_ITERATION;
 
 typedef struct Send_t {
-	uint8_t payloadSize;
 	uint32_t id;
+	uint8_t payloadSize;
 	uint8_t data[8];
 } Send_t;
 

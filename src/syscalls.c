@@ -13,22 +13,22 @@
 extern void __heap_start__;
 extern void __heap_end__;
 
-//extern void *_sbrk(int incr) {
-//	static unsigned char *heap = NULL;
-//	unsigned char *prev_heap;
-//
-//	if (heap == NULL) {
-//		// start address of heap
-//		heap = (unsigned char *) &__heap_start__;
-//	}
-//	prev_heap = heap;
-//
-//	if ((heap + incr) >= (unsigned char *) &__heap_end__) {
-//		return 0;
-//	}
-//	heap += incr;
-//	return (void *) prev_heap;
-//}
+extern void *_sbrk(int incr) {
+	static unsigned char *heap = NULL;
+	unsigned char *prev_heap;
+
+	if (heap == NULL) {
+		// start address of heap
+		heap = (unsigned char *) &__heap_start__;
+	}
+	prev_heap = heap;
+
+	if ((heap + incr) >= (unsigned char *) &__heap_end__) {
+		return 0;
+	}
+	heap += incr;
+	return (void *) prev_heap;
+}
 
 
 

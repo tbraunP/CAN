@@ -33,7 +33,7 @@ void slave_main(void){
 		// wait for go
 		while(!canGo);
 
-		STM_EVAL_LEDOn(LED6);
+		STM_EVAL_LEDToggle(LED6);
 
 		// send CAN message
 		TxMessage1.DLC = tasks[i].payloadSize;
@@ -44,12 +44,12 @@ void slave_main(void){
 		++i;
 
 		// send two frames per toggle?
-		if(TWO_MES_PER_ITERATION){
+		if(TWO_MES_PER_ITERATION==1){
 			TxMessage2.DLC = tasks[i].payloadSize;
 			TxMessage2.StdId = tasks[i].id;
 			for(int j=0;j< tasks[i].payloadSize;j++)
 				TxMessage2.Data[j] = tasks[i].data[j];
-			CAN_Transmit(CANx, &TxMessage1);
+			CAN_Transmit(CANx, &TxMessage2);
 			++i;
 		}
 

@@ -31,6 +31,7 @@
 #include "main.h"
 #include "config.h"
 #include "master/master_report.h"
+#include "master/master_io.h"
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
@@ -48,7 +49,6 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 CanRxMsg RxMessage;
-extern uint8_t KeyNumber;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -158,7 +158,6 @@ void SysTick_Handler(void) {
  }*/
 
 void Init_RxMes(CanRxMsg *RxMessage);
-void Init_TxMes(CanTxMsg *TxMessage);
 
 #ifdef USE_CAN1
 /**
@@ -213,6 +212,7 @@ void EXTI15_10_IRQHandler(void) {
 extern volatile uint8_t overflow;
 
 void TIM2_IRQHandler(void) {
+	GPIO_Master_MSignalizeReset();
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	overflow = 1;
 	STM_EVAL_LEDOn(LED6);

@@ -12,6 +12,8 @@
 
 void Timer_init(void);
 void Timer_startTimer(void);
+
+#define Timer_start() TIM2->CR1 |= TIM_CR1_CEN
 void Timer_stopTimer(void);
 
 #define getTimerValue() 	((uint32_t) TIM2->CNT)
