@@ -173,7 +173,7 @@ void CAN1_RX0_IRQHandler(void) {
 	uint32_t timestamp = TIM2->CNT;
 
 	// handle reception
-	Init_RxMes(&RxMessage);
+	CanRxMsg RxMessage;
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
 	// not processing starts

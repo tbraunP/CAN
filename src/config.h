@@ -9,7 +9,7 @@
 #define CONFIG_H_
 
 // role
-//#define CLIENT_ONLY
+#define CLIENT_ONLY
 
 // Definition of client
 #ifndef CLIENT_ONLY
