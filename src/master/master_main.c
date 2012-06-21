@@ -28,17 +28,24 @@ void calibrate() {
 	Timer_start();
 
 	while (!overflow)
-		;
+	;
 	GPIO_Master_MSignalizeReset();
 	Timer_stopTimer();
 	UART_StrSend("# Calibration timeout\n");
 	STM_EVAL_LEDOn(LED5);
 	STM_EVAL_LEDOn(LED6);
 	while (1)
-		;
+	;
 
 }
 #endif
+
+void Delay2(void) {
+	uint16_t nTime = 0x0000;
+
+	for (nTime = 0; nTime < 0xFFF; nTime++) {
+	}
+}
 
 void master_main(void) {
 	Timer_init();
@@ -64,17 +71,24 @@ void master_main(void) {
 					;
 			}
 		}
-
-		// Stop Timer and start signal
-		GPIO_Master_MSignalizeReset();
+        // we don't need the timer
 		Timer_stopTimer();
 
 		// reset state
 		overflow = 0;
 		reportCreated = 0;
 
+		// Stop Timer and start signal
+		GPIO_Master_MSignalizeReset();
+
 		// transmit report via UART
 		printReport();
+
+		// some delay
+		Delay2();
+		Delay2();
+		Delay2();
+		Delay2();
 	}
 #endif
 }

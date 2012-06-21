@@ -19,6 +19,13 @@ volatile uint8_t canGo = 0;
 CanTxMsg TxMessage1;
 CanTxMsg TxMessage2;
 
+void Delay3(void) {
+	uint16_t nTime = 0x0000;
+
+	for (nTime = 0; nTime < 0xFFF; nTime++) {
+	}
+}
+
 void slave_main(void){
 	int i=0;
 
@@ -32,7 +39,7 @@ void slave_main(void){
 	while(1){
 		// wait for go
 		while(!canGo);
-
+		STM_EVAL_LEDOff(LED4);
 		STM_EVAL_LEDToggle(LED6);
 
 		// send CAN message
@@ -63,7 +70,12 @@ void slave_main(void){
 		}
 
 		// reset
+		STM_EVAL_LEDOn(LED4);
 		STM_EVAL_LEDOff(LED6);
+
+		// wait at least some time
+		Delay3();
+		Delay3();
 		canGo = 0;
 	}
 }

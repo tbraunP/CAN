@@ -45,6 +45,7 @@ void GPIO_Slave_init(void) {
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	EXTI_ClearITPendingBit(EXTI_Line15);
 	NVIC_Init(&NVIC_InitStructure);
 
 }
