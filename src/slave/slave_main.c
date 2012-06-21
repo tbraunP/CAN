@@ -12,6 +12,7 @@
 #include "slave_main.h"
 #include "main.h"
 #include "config.h"
+#include "common/timer.h"
 #include "sendTasks.h"
 
 volatile uint8_t canGo = 0;
@@ -28,6 +29,8 @@ void Delay3(void) {
 
 void slave_main(void){
 	int i=0;
+
+	Timer_init(8); // 125 ms delay between detection of rising edge
 
 	// init message containers
 	TxMessage1.IDE = CAN_Id_Standard;
@@ -74,10 +77,13 @@ void slave_main(void){
 		STM_EVAL_LEDOff(LED6);
 
 		// wait at least some time
-		Delay3();
-		Delay3();
-		Delay3();
-		Delay3();
+		// some delay
+		overflow = 0;
+		Timer_start();
+		while(!overflow);
+		overflow = 0;
+		Timer_stopTimer();
+
 		canGo = 0;
 	}
 }

@@ -30,8 +30,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "config.h"
+#include "common/timer.h"
 #include "master/master_report.h"
 #include "master/master_io.h"
+#include "master/master_uart.h"
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
@@ -179,6 +181,12 @@ void CAN1_RX0_IRQHandler(void) {
 	// not processing starts
 	uint32_t timestamp2 = TIM2->CNT;
 
+	// sanity check if receptions during wait phase
+	if(allowReceptions == 0){
+		UART_StrSend("Unexpected Reception aborting\r\n");
+		while(1);
+	}
+
 	// signalize reception
 	LED_Display(led);
 	if (led++ >= 4)
@@ -194,6 +202,7 @@ void CAN1_RX0_IRQHandler(void) {
 	if (entry == MAXREPORTS) {
 		reportCreated = 1;
 		entry = 0;
+		allowReceptions = 0;
 	}
 #endif
 }
@@ -209,10 +218,10 @@ void EXTI15_10_IRQHandler(void) {
 	canGo = 1;
 }
 
-extern volatile uint8_t overflow;
-
 void TIM2_IRQHandler(void) {
+#ifdef MASTER
 	GPIO_Master_MSignalizeReset();
+#endif
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	overflow = 1;
 	STM_EVAL_LEDOn(LED6);

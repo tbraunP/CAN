@@ -7,7 +7,7 @@
 #include "config.h"
 #include "master_main.h"
 #include "master_io.h"
-#include "master_timer.h"
+#include "common/timer.h"
 #include "master_uart.h"
 #include "util/stm32f4_discovery.h"
 #include "master_report.h"
@@ -18,7 +18,6 @@
 
 void printReport(void);
 
-volatile uint8_t overflow = 0;
 
 #ifdef CALIBRATE_ONLY
 void calibrate() {
@@ -48,7 +47,7 @@ void Delay2(void) {
 }
 
 void master_main(void) {
-	Timer_init();
+	Timer_init(1); // 250 ms timeout and delay between transmissions
 	UART_init();
 
 	UART_StrSend("# MasterNode up\n");
@@ -58,9 +57,10 @@ void master_main(void) {
 #else
 	while (1) {
 		// notify nodes
+		allowReceptions = 1;
 		STM_EVAL_LEDOn(LED5);
-		GPIO_Master_MSignalizeStart();
 		Timer_start();
+		GPIO_Master_MSignalizeStart();
 
 		// wait for all message to be received
 		while (!reportCreated) {
@@ -85,14 +85,10 @@ void master_main(void) {
 		printReport();
 
 		// some delay
-		Delay2();
-		Delay2();
-		Delay2();
-		Delay2();
-		Delay2();
-		Delay2();
-		Delay2();
-		Delay2();
+		Timer_start();
+		while(!overflow);
+		overflow = 0;
+		Timer_stopTimer();
 	}
 #endif
 }
