@@ -76,6 +76,8 @@ void slave_main(void){
 		// wait at least some time
 		Delay3();
 		Delay3();
+		Delay3();
+		Delay3();
 		canGo = 0;
 	}
 }

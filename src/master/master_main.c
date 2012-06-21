@@ -89,6 +89,10 @@ void master_main(void) {
 		Delay2();
 		Delay2();
 		Delay2();
+		Delay2();
+		Delay2();
+		Delay2();
+		Delay2();
 	}
 #endif
 }
