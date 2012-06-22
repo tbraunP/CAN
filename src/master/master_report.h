@@ -16,6 +16,8 @@ typedef struct Report_t{
 	uint32_t id;
 	uint32_t time;
 	uint32_t timeProc;
+	uint8_t size;
+	uint8_t payload[8];
 } Report_t;
 
 // report array for id 20, 30, 40, 41

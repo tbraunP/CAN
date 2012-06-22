@@ -12,12 +12,12 @@
 #include "util/stm32f4_discovery.h"
 #include "master_report.h"
 #include "common/itoa.h"
+#include "common/hex.h"
 
 #include <stdint.h>
 #include <string.h>
 
 void printReport(void);
-
 
 #ifdef CALIBRATE_ONLY
 void calibrate() {
@@ -71,7 +71,7 @@ void master_main(void) {
 					;
 			}
 		}
-        // we don't need the timer
+		// we don't need the timer
 		Timer_stopTimer();
 
 		// reset state
@@ -86,7 +86,8 @@ void master_main(void) {
 
 		// some delay
 		Timer_start();
-		while(!overflow);
+		while (!overflow)
+			;
 		overflow = 0;
 		Timer_stopTimer();
 	}
@@ -100,6 +101,14 @@ void printReport(void) {
 		UART_StrSend(itoa(report[i].time));
 		UART_StrSend(" ; ");
 		UART_StrSend(itoa(report[i].timeProc));
+		UART_StrSend(" ; ");
+		UART_StrSend("0x");
+		for (int j = 0; j < report[i].size; j++) {
+			char high[2] = { toHex(((report[i].payload[j]) >> 4) & 0xF), '0'};
+			UART_StrSend(high);
+			char low[2] = {toHex(((report[i].payload[j])) & 0xF), '0'};
+			UART_StrSend(low);
+		}
 		UART_StrSend("\n");
 
 		// reset

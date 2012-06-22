@@ -34,6 +34,7 @@
 #include "master/master_report.h"
 #include "master/master_io.h"
 #include "master/master_uart.h"
+#include "slave/slave_main.h"
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
@@ -159,7 +160,6 @@ void SysTick_Handler(void) {
  {
  }*/
 
-void Init_RxMes(CanRxMsg *RxMessage);
 
 #ifdef USE_CAN1
 /**
@@ -195,7 +195,11 @@ void CAN1_RX0_IRQHandler(void) {
 	// store report
 	report[entry].id = RxMessage.StdId;
 	report[entry].time = timestamp;
+	report[entry].size = RxMessage.DLC;
 	report[entry].timeProc = timestamp2;
+	for(int i=0; i < RxMessage.DLC; i++){
+		report[entry].payload[i] = RxMessage.Data[i];
+	}
 
 	// check if cycle has been finished -> transmit report
 	++entry;
@@ -211,11 +215,11 @@ void CAN1_RX0_IRQHandler(void) {
 /**
  * @}
  */
-extern volatile uint8_t canGo;
 
 void EXTI15_10_IRQHandler(void) {
 	EXTI_ClearITPendingBit(EXTI_Line15);
-	canGo = 1;
+	// send messages
+	canSendMessage();
 }
 
 void TIM2_IRQHandler(void) {

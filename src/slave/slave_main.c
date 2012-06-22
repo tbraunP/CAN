@@ -27,10 +27,52 @@ void Delay3(void) {
 	}
 }
 
-void slave_main(void){
-	int i=0;
+// local counter
+volatile int i = 0;
 
-	Timer_init(8); // 125 ms delay between detection of rising edge
+/**
+ * Callback on interrupt, runs in interrupt context
+ */
+void canSendMessage(void) {
+	STM_EVAL_LEDOff(LED4);
+	STM_EVAL_LEDToggle(LED6);
+
+	// send CAN message
+	TxMessage1.DLC = tasks[i].payloadSize;
+	TxMessage1.StdId = tasks[i].id;
+	for (int j = 0; j < tasks[i].payloadSize; j++)
+		TxMessage1.Data[j] = tasks[i].data[j];
+	CAN_Transmit(CANx, &TxMessage1);
+	++i;
+
+	// send two frames per toggle? -> used for ABSSensor
+	if (TWO_MES_PER_ITERATION == 1) {
+		TxMessage2.DLC = tasks[i].payloadSize;
+		TxMessage2.StdId = tasks[i].id;
+		for (int j = 0; j < tasks[i].payloadSize; j++)
+			TxMessage2.Data[j] = tasks[i].data[j];
+		CAN_Transmit(CANx, &TxMessage2);
+		++i;
+	}
+
+	// check for termination
+	if (i == MAXENTRIES) {
+		STM_EVAL_LEDOn(LED6);
+		STM_EVAL_LEDOn(LED5);
+		STM_EVAL_LEDOn(LED4);
+		STM_EVAL_LEDOn(LED3);
+		while (1)
+			;
+	}
+
+	STM_EVAL_LEDOff(LED4);
+	STM_EVAL_LEDToggle(LED6);
+	canGo = 1;
+}
+
+void slave_main(void) {
+
+	Timer_init(2); // 500 ms delay between detection of rising edge
 
 	// init message containers
 	TxMessage1.IDE = CAN_Id_Standard;
@@ -39,48 +81,17 @@ void slave_main(void){
 	TxMessage1.RTR = CAN_RTR_Data;
 	TxMessage2.RTR = CAN_RTR_Data;
 
-	while(1){
+	while (1) {
 		// wait for go
-		while(!canGo);
-		STM_EVAL_LEDOff(LED4);
-		STM_EVAL_LEDToggle(LED6);
-
-		// send CAN message
-		TxMessage1.DLC = tasks[i].payloadSize;
-		TxMessage1.StdId = tasks[i].id;
-		for(int j=0;j< tasks[i].payloadSize;j++)
-			TxMessage1.Data[j] = tasks[i].data[j];
-		CAN_Transmit(CANx, &TxMessage1);
-		++i;
-
-		// send two frames per toggle?
-		if(TWO_MES_PER_ITERATION==1){
-			TxMessage2.DLC = tasks[i].payloadSize;
-			TxMessage2.StdId = tasks[i].id;
-			for(int j=0;j< tasks[i].payloadSize;j++)
-				TxMessage2.Data[j] = tasks[i].data[j];
-			CAN_Transmit(CANx, &TxMessage2);
-			++i;
-		}
-
-		// check for termination
-		if(i == MAXENTRIES){
-			STM_EVAL_LEDOn(LED6);
-			STM_EVAL_LEDOn(LED5);
-			STM_EVAL_LEDOn(LED4);
-			STM_EVAL_LEDOn(LED3);
-			while(1);
-		}
-
-		// reset
-		STM_EVAL_LEDOn(LED4);
-		STM_EVAL_LEDOff(LED6);
+		while (!canGo)
+			;
 
 		// wait at least some time
 		// some delay
 		overflow = 0;
 		Timer_start();
-		while(!overflow);
+		while (!overflow)
+			;
 		overflow = 0;
 		Timer_stopTimer();
 

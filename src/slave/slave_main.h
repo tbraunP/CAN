@@ -12,6 +12,6 @@
 extern volatile uint8_t canGo;
 
 void slave_main(void);
-
+void canSendMessage(void);
 
 #endif /* SLAVE_MAIN_H_ */
