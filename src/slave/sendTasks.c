@@ -27,15 +27,15 @@ Send_t tasks[] = {
 
 #ifdef SLAVE
 #ifdef ABSSENSOR
-	#include "scenario/messageTask_1_PCUNode1ABSSensor.inc"
+	#include "scenario/messageTask_3_PCUNode1ABSSensor.inc"
 #endif
 
 #ifdef HYDRO
-#include "scenario/messageTask_1_PCUNode2Hydro.inc"
+#include "scenario/messageTask_3_PCUNode2Hydro.inc"
 #endif
 
 #ifdef ABS
-#include "scenario/messageTask_1_PCUNode3ABS.inc"
+#include "scenario/messageTask_3_PCUNode3ABS.inc"
 #endif
 #endif
 

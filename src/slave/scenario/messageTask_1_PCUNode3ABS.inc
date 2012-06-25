@@ -1,5 +1,7 @@
+#ifndef messageTask_1_PCUNode3ABS.inc_
+#define messageTask_1_PCUNode3ABS.inc_
 
-Send_t tasks[] = { 
+Send_t task[] = { 
 { 20, 4, { 0x3,0x8,0x0,0x0} },
 { 20, 4, { 0x3,0x8,0x0,0x0} },
 { 20, 4, { 0x3,0x8,0x0,0x0} },
@@ -2002,3 +2004,5 @@ Send_t tasks[] = {
 {0,0,{0}}};
 
 int MAXENTRIES = (1999);
+
+#endif
