@@ -47,7 +47,7 @@ void Delay2(void) {
 }
 
 void master_main(void) {
-	Timer_init(1); // 250 ms timeout and delay between transmissions
+	Timer_init(1); // 1 s timeout and delay between transmissions
 	UART_init();
 
 	UART_StrSend("# MasterNode up\n");
@@ -58,10 +58,10 @@ void master_main(void) {
 	while (1) {
 		// notify nodes
 		allowReceptions = 1;
-		STM_EVAL_LEDOn(LED5);
 		Timer_start();
 		GPIO_Master_MSignalizeStart();
 
+		STM_EVAL_LEDOn(LED5);
 		// wait for all message to be received
 		while (!reportCreated) {
 			if (overflow) {
@@ -71,7 +71,7 @@ void master_main(void) {
 					;
 			}
 		}
-		// we don't need the timer
+		// we don't need the timer any longer
 		Timer_stopTimer();
 
 		// reset state
@@ -94,8 +94,12 @@ void master_main(void) {
 #endif
 }
 
+int run = 0;
+
 void printReport(void) {
 	for (int i = 0; i < MAXREPORTS; i++) {
+		UART_StrSend(itoa(run));
+		UART_StrSend(" ; ");
 		UART_StrSend(itoa(report[i].id));
 		UART_StrSend(" ; ");
 		UART_StrSend(itoa(report[i].time));
@@ -116,4 +120,5 @@ void printReport(void) {
 		report[i].time = 0;
 		report[i].timeProc = 0;
 	}
+	++run;
 }

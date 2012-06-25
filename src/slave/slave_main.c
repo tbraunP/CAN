@@ -38,19 +38,34 @@ void canSendMessage(void) {
 	STM_EVAL_LEDToggle(LED6);
 
 	// send CAN message
+	TxMessage1.IDE = CAN_Id_Standard;
+	TxMessage1.RTR = CAN_RTR_Data;
+
 	TxMessage1.DLC = tasks[i].payloadSize;
 	TxMessage1.StdId = tasks[i].id;
-	for (int j = 0; j < tasks[i].payloadSize; j++)
+	for (int j = 0; j < 8; j++) {
+		if (j >= tasks[i].payloadSize) {
+			TxMessage1.Data[j] = 0;
+			continue;
+		}
 		TxMessage1.Data[j] = tasks[i].data[j];
-	CAN_Transmit(CANx, &TxMessage1);
-	++i;
+	}
 
 	// send two frames per toggle? -> used for ABSSensor
 	if (TWO_MES_PER_ITERATION == 1) {
+		TxMessage2.IDE = CAN_Id_Standard;
+		TxMessage2.RTR = CAN_RTR_Data;
+
 		TxMessage2.DLC = tasks[i].payloadSize;
 		TxMessage2.StdId = tasks[i].id;
-		for (int j = 0; j < tasks[i].payloadSize; j++)
+
+		for (int j = 0; j < 8; j++) {
+			if (j >= tasks[i].payloadSize) {
+				TxMessage2.Data[j] = 0;
+				continue;
+			}
 			TxMessage2.Data[j] = tasks[i].data[j];
+		}
 		CAN_Transmit(CANx, &TxMessage2);
 		++i;
 	}
@@ -82,12 +97,11 @@ void slave_main(void) {
 	TxMessage2.RTR = CAN_RTR_Data;
 
 	while (1) {
-		// wait for go
+		// wait for go, set by message send request
 		while (!canGo)
 			;
 
-		// wait at least some time
-		// some delay
+		// wait at some time before considering new pin changes
 		overflow = 0;
 		Timer_start();
 		while (!overflow)
