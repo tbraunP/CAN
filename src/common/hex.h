@@ -13,9 +13,9 @@
 
 char toHex(uint8_t val){
 	if(val <= 9){
-		return '0' + val;
+		return (char) ('0' + val);
 	}
-	return 'a'+(val-10);
+	return (char) ('a'+(val-10));
 }
 
 #endif /* HEX_H_ */

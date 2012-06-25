@@ -28,7 +28,7 @@ void Delay3(void) {
 }
 
 // local counter
-volatile int i = 0;
+volatile int taskNo = 0;
 
 /**
  * Callback on interrupt, runs in interrupt context
@@ -41,37 +41,40 @@ void canSendMessage(void) {
 	TxMessage1.IDE = CAN_Id_Standard;
 	TxMessage1.RTR = CAN_RTR_Data;
 
-	TxMessage1.DLC = tasks[i].payloadSize;
-	TxMessage1.StdId = tasks[i].id;
+	TxMessage1.DLC = tasks[taskNo].payloadSize;
+	TxMessage1.StdId = tasks[taskNo].id;
 	for (int j = 0; j < 8; j++) {
-		if (j >= tasks[i].payloadSize) {
+		if (j >= tasks[taskNo].payloadSize) {
 			TxMessage1.Data[j] = 0;
 			continue;
 		}
-		TxMessage1.Data[j] = tasks[i].data[j];
+		TxMessage1.Data[j] = tasks[taskNo].data[j];
 	}
+	CAN_Transmit(CANx, &TxMessage1);
+	++taskNo;
 
 	// send two frames per toggle? -> used for ABSSensor
 	if (TWO_MES_PER_ITERATION == 1) {
+
 		TxMessage2.IDE = CAN_Id_Standard;
 		TxMessage2.RTR = CAN_RTR_Data;
 
-		TxMessage2.DLC = tasks[i].payloadSize;
-		TxMessage2.StdId = tasks[i].id;
+		TxMessage2.DLC = tasks[taskNo].payloadSize;
+		TxMessage2.StdId = tasks[taskNo].id;
 
 		for (int j = 0; j < 8; j++) {
-			if (j >= tasks[i].payloadSize) {
+			if (j >= tasks[taskNo].payloadSize) {
 				TxMessage2.Data[j] = 0;
 				continue;
 			}
-			TxMessage2.Data[j] = tasks[i].data[j];
+			TxMessage2.Data[j] = tasks[taskNo].data[j];
 		}
 		CAN_Transmit(CANx, &TxMessage2);
-		++i;
+		++taskNo;
 	}
 
 	// check for termination
-	if (i == MAXENTRIES) {
+	if (taskNo == MAXENTRIES) {
 		STM_EVAL_LEDOn(LED6);
 		STM_EVAL_LEDOn(LED5);
 		STM_EVAL_LEDOn(LED4);
@@ -82,7 +85,6 @@ void canSendMessage(void) {
 
 	STM_EVAL_LEDOff(LED4);
 	STM_EVAL_LEDToggle(LED6);
-	canGo = 1;
 }
 
 void slave_main(void) {
@@ -98,15 +100,21 @@ void slave_main(void) {
 
 	while (1) {
 		// wait for go, set by message send request
-		while (!canGo)
-			;
+		while (!canGo){
+			STM_EVAL_LEDOn(LED4);
+		}
+		STM_EVAL_LEDOff(LED4);
+		canSendMessage();
+
 
 		// wait at some time before considering new pin changes
 		overflow = 0;
 		Timer_start();
-		while (!overflow)
-			;
-		overflow = 0;
+		while (!overflow){
+			STM_EVAL_LEDOn(LED6);
+		}
+		STM_EVAL_LEDOff(LED6);
+
 		Timer_stopTimer();
 
 		canGo = 0;

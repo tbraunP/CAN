@@ -160,7 +160,6 @@ void SysTick_Handler(void) {
  {
  }*/
 
-
 #ifdef USE_CAN1
 /**
  * @brief  This function handles CAN1 RX0 request.
@@ -172,34 +171,36 @@ uint8_t led = 0;
 
 void CAN1_RX0_IRQHandler(void) {
 #ifdef MASTER
-	uint32_t timestamp = TIM2->CNT;
+	uint32_t timestamp = 1 + (TIM2->CNT);
 
 	// handle reception
 	CanRxMsg RxMessage;
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
-	// not processing starts
-	uint32_t timestamp2 = TIM2->CNT;
-
 	// sanity check if receptions during wait phase
-	if(allowReceptions == 0){
+	if (allowReceptions == 0) {
 		UART_StrSend("Unexpected Reception aborting\r\n");
-		while(1);
+		while (1)
+			;
 	}
 
 	// signalize reception
 	LED_Display(led);
 	if (led++ >= 4)
-	led = 0;
+		led = 0;
 
 	// store report
 	report[entry].id = RxMessage.StdId;
 	report[entry].time = timestamp;
 	report[entry].size = RxMessage.DLC;
-	report[entry].timeProc = timestamp2;
-	for(int i=0; i < RxMessage.DLC; i++){
+
+	for (int i = 0; i < RxMessage.DLC; i++) {
 		report[entry].payload[i] = RxMessage.Data[i];
 	}
+
+	// after processing
+	uint32_t timestamp2 = 1 + TIM2->CNT; // now calc time as timestamp2*(1/timerCLK)
+	report[entry].timeProc = timestamp2;
 
 	// check if cycle has been finished -> transmit report
 	++entry;
@@ -219,7 +220,8 @@ void CAN1_RX0_IRQHandler(void) {
 void EXTI15_10_IRQHandler(void) {
 	EXTI_ClearITPendingBit(EXTI_Line15);
 	// send messages
-	canSendMessage();
+	//canSendMessage();
+	canGo = 1;
 }
 
 void TIM2_IRQHandler(void) {

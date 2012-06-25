@@ -74,20 +74,23 @@ void master_main(void) {
 		// we don't need the timer any longer
 		Timer_stopTimer();
 
-		// reset state
-		overflow = 0;
-		reportCreated = 0;
-
 		// Stop Timer and start signal
 		GPIO_Master_MSignalizeReset();
 
 		// transmit report via UART
 		printReport();
 
+		// reset state
+		overflow = 0;
+		reportCreated = 0;
+
 		// some delay
 		Timer_start();
-		while (!overflow)
-			;
+		while (!overflow) {
+			STM_EVAL_LEDOn(LED3);
+		}
+		STM_EVAL_LEDOff(LED3);
+
 		overflow = 0;
 		Timer_stopTimer();
 	}
@@ -108,10 +111,10 @@ void printReport(void) {
 		UART_StrSend(" ; ");
 		UART_StrSend("0x");
 		for (int j = 0; j < report[i].size; j++) {
-			char high[2] = { toHex(((report[i].payload[j]) >> 4) & 0xF), '0'};
-			UART_StrSend(high);
-			char low[2] = {toHex(((report[i].payload[j])) & 0xF), '0'};
-			UART_StrSend(low);
+			char high[2] = { toHex(((report[i].payload[j]) >> 4) & 0xF), '0' };
+			UART_send(high,1);
+			char low[2] = { toHex(((report[i].payload[j])) & 0xF), '0' };
+			UART_send(low,1);
 		}
 		UART_StrSend("\n");
 

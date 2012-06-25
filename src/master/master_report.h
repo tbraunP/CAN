@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#define MAXREPORTS	(4)
+#define MAXREPORTS	(2)
 
 typedef struct Report_t{
 	uint32_t id;
