@@ -9,7 +9,7 @@
 #define CONFIG_H_
 
 // role
-//#define CLIENT_ONLY
+#define CLIENT_ONLY
 
 // Definition of client
 #ifndef CLIENT_ONLY
@@ -19,7 +19,7 @@
 	#define SLAVE
 
 	// chose device to simulate
-	//#define ABSSENSOR
+	#define ABSSENSOR
 	//#define HYDRO
 	//#define ABS
 

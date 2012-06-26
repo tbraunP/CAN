@@ -95,6 +95,7 @@ void slave_main(void) {
 		while (!canGo){
 			STM_EVAL_LEDOn(LED4);
 		}
+		canSendMessage();
 		STM_EVAL_LEDOff(LED4);
 
 		// wait at some time before considering new pin changes
