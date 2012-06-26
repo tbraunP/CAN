@@ -34,20 +34,13 @@ volatile int taskNo = 0;
  * Callback on interrupt, runs in interrupt context
  */
 void canSendMessage(void) {
-	STM_EVAL_LEDOff(LED4);
-	STM_EVAL_LEDToggle(LED6);
-
 	// send CAN message
 	TxMessage1.IDE = CAN_Id_Standard;
 	TxMessage1.RTR = CAN_RTR_Data;
 
 	TxMessage1.DLC = tasks[taskNo].payloadSize;
 	TxMessage1.StdId = tasks[taskNo].id;
-	for (int j = 0; j < 8; j++) {
-		if (j >= tasks[taskNo].payloadSize) {
-			TxMessage1.Data[j] = 0;
-			continue;
-		}
+	for (int j = 0; j < TxMessage1.DLC; j++) {
 		TxMessage1.Data[j] = tasks[taskNo].data[j];
 	}
 	CAN_Transmit(CANx, &TxMessage1);
@@ -62,16 +55,15 @@ void canSendMessage(void) {
 		TxMessage2.DLC = tasks[taskNo].payloadSize;
 		TxMessage2.StdId = tasks[taskNo].id;
 
-		for (int j = 0; j < 8; j++) {
-			if (j >= tasks[taskNo].payloadSize) {
-				TxMessage2.Data[j] = 0;
-				continue;
-			}
+		for (int j = 0; j < TxMessage2.DLC; j++) {
 			TxMessage2.Data[j] = tasks[taskNo].data[j];
 		}
 		CAN_Transmit(CANx, &TxMessage2);
 		++taskNo;
 	}
+
+	STM_EVAL_LEDOff(LED4);
+	STM_EVAL_LEDToggle(LED6);
 
 	// check for termination
 	if (taskNo == MAXENTRIES) {
@@ -104,8 +96,6 @@ void slave_main(void) {
 			STM_EVAL_LEDOn(LED4);
 		}
 		STM_EVAL_LEDOff(LED4);
-		canSendMessage();
-
 
 		// wait at some time before considering new pin changes
 		overflow = 0;

@@ -21,7 +21,7 @@
 	// chose device to simulate
 	//#define ABSSENSOR
 	//#define HYDRO
-	#define ABS
+	//#define ABS
 
 #endif
 

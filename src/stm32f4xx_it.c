@@ -218,9 +218,9 @@ void CAN1_RX0_IRQHandler(void) {
  */
 
 void EXTI15_10_IRQHandler(void) {
-	EXTI_ClearITPendingBit(EXTI_Line15);
 	// send messages
-	//canSendMessage();
+	canSendMessage();
+	EXTI_ClearITPendingBit(EXTI_Line15);
 	canGo = 1;
 }
 

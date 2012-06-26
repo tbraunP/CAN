@@ -58,8 +58,8 @@ void master_main(void) {
 	while (1) {
 		// notify nodes
 		allowReceptions = 1;
-		Timer_start();
 		GPIO_Master_MSignalizeStart();
+		Timer_start();
 
 		STM_EVAL_LEDOn(LED5);
 		// wait for all message to be received
