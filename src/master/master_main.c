@@ -49,6 +49,7 @@ void Delay2(void) {
 
 void master_main(void) {
 	uint8_t toggle = 0;
+	STM_EVAL_LEDOn(LED3);
 	Timer_init(1); // 1 s timeout and delay between transmissions
 	Q_UART_init();
 
@@ -58,9 +59,12 @@ void master_main(void) {
 	calibrate();
 #else
 	while (1) {
-		Timer_start();
+		Timer_startTimer();
 
-		if (overflow) {
+		while(overflow==0);
+
+		if(overflow){
+			/*
 			CanTxMsg message;
 			message.RTR = CAN_RTR_Data;
 			message.DLC = 4;
@@ -68,23 +72,22 @@ void master_main(void) {
 			message.IDE = CAN_Id_Standard;
 			uint8_t data[8] = {'A','F','F','E', 'A','F','F','E'};
 			memcpy(message.Data, data, 8*sizeof(uint8_t));
-
-			CAN_Transmit(CANx, &message);
-			Q_UART_DMAsendZTString("# Experiment timeout\n");
-			printReport();
-			while (1)
-				;
+*/
+			//CAN_Transmit(CANx, &message);
 		}
 		// we don't need the timer any longer
 		Timer_stopTimer();
+		overflow = 0;
 
 		// toggle led
-		if(!toggle){
+		if(toggle==0){
 			STM_EVAL_LEDOn(LED5);
 		}else{
 			STM_EVAL_LEDOff(LED5);
 		}
 		toggle = (toggle == 0) ? 1 : 0;
+
+		STM_EVAL_LEDOn(LED4);
 	}
 #endif
 }

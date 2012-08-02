@@ -18,7 +18,7 @@
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.697730871" name="Debug" parent="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug">
 					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.697730871." name="/" resourcePath="">
 						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.395780615" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug">
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1857049102" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1857049102" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.max" valueType="enumerated"/>
 							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug.839629650" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
 							<builder buildPath="${workspace_loc:/CAN/Debug}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.builder.debug.990291749" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="ARM Sourcery Linux GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.builder.debug"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.1978957266" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug">
@@ -31,7 +31,7 @@
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1591261619" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
 							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.632543879" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.1020090095" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.most" valueType="enumerated"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.1020090095" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.none" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.20203544" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="USE_STM32_DISCOVERY"/>
@@ -145,8 +145,13 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="CAN.org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.566597490" name="ARM Cross Target Application" projectType="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/CAN"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/CAN"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/CAN"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">

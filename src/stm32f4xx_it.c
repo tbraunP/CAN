@@ -169,6 +169,7 @@ uint8_t entry = 0;
 uint8_t led = 0;
 
 void CAN1_RX0_IRQHandler(void) {
+#if 0
 	uint32_t timestamp = 1 + (TIM2->CNT);
 
 	// handle reception
@@ -207,6 +208,7 @@ void CAN1_RX0_IRQHandler(void) {
 		entry = 0;
 		allowReceptions = 0;
 	}
+#endif
 }
 #endif  /* USE_CAN1 */
 
@@ -222,12 +224,21 @@ void EXTI15_10_IRQHandler(void) {
 }
 
 void TIM2_IRQHandler(void) {
-#ifdef MASTER
-	GPIO_Master_MSignalizeReset();
-#endif
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	overflow = 1;
 	STM_EVAL_LEDOn(LED6);
+}
+
+
+void DMA1_Stream6_IRQHandler() {
+        /* Test on DMA Stream Transfer Complete interrupt */
+        if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6) == SET) {
+                /* Clear DMA Stream Transfer Complete interrupt pending bit */
+                DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
+
+                // handle request
+                Q_UART_DMA_TXComplete();
+        }
 }
 
 /**

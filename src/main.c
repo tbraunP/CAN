@@ -19,7 +19,7 @@ int main(void) {
 	/* NVIC configuration */
 	NVIC_Config();
 
-	GPIO_Master_init();
+	//GPIO_Master_init();
 
 	/* Configures LED 1..4 */
 	STM_EVAL_LEDInit(LED5);
@@ -31,7 +31,7 @@ int main(void) {
 	STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_GPIO);
 
 	/* CAN configuration */
-	CAN_Config();
+	//CAN_Config();
 
 	/* Infinite loop */
 	master_main();
@@ -104,10 +104,8 @@ void CAN_Config(void) {
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
-#ifdef MASTER
 	/* Enable FIFO 0 message pending Interrupt */
 	CAN_ITConfig(CANx, CAN_IT_FMP0, ENABLE);
-#endif
 }
 
 /**
