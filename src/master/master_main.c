@@ -4,6 +4,7 @@
  *  Created on: Jun 12, 2012
  *      Author: braun
  */
+#include "../main.h"
 #include "config.h"
 #include "master_main.h"
 #include "master_io.h"
@@ -47,6 +48,7 @@ void Delay2(void) {
 }
 
 void master_main(void) {
+	uint8_t toggle = 0;
 	Timer_init(1); // 1 s timeout and delay between transmissions
 	Q_UART_init();
 
@@ -56,43 +58,33 @@ void master_main(void) {
 	calibrate();
 #else
 	while (1) {
-		// notify nodes
-		allowReceptions = 1;
-		GPIO_Master_MSignalizeStart();
 		Timer_start();
 
-		STM_EVAL_LEDOn(LED5);
-		// wait for all message to be received
-		while (!reportCreated) {
-			if (overflow) {
-				Q_UART_DMAsendZTString("# Experiment timeout\n");
-				printReport();
-				while (1)
-					;
-			}
+		if (overflow) {
+			CanTxMsg message;
+			message.RTR = CAN_RTR_Data;
+			message.DLC = 4;
+			message.StdId = 1;
+			message.IDE = CAN_Id_Standard;
+			uint8_t data[8] = {'A','F','F','E', 'A','F','F','E'};
+			memcpy(message.Data, data, 8*sizeof(uint8_t));
+
+			CAN_Transmit(CANx, &message);
+			Q_UART_DMAsendZTString("# Experiment timeout\n");
+			printReport();
+			while (1)
+				;
 		}
 		// we don't need the timer any longer
 		Timer_stopTimer();
 
-		// Stop Timer and start signal
-		GPIO_Master_MSignalizeReset();
-
-		// transmit report via UART
-		printReport();
-
-		// reset state
-		overflow = 0;
-		reportCreated = 0;
-
-		// some delay
-		Timer_start();
-		while (!overflow) {
-			STM_EVAL_LEDOn(LED3);
+		// toggle led
+		if(!toggle){
+			STM_EVAL_LEDOn(LED5);
+		}else{
+			STM_EVAL_LEDOff(LED5);
 		}
-		STM_EVAL_LEDOff(LED3);
-
-		overflow = 0;
-		Timer_stopTimer();
+		toggle = (toggle == 0) ? 1 : 0;
 	}
 #endif
 }

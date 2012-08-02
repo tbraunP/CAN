@@ -1,0 +1,371 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"stm32f4xx_dac.c"
+  14              		.text
+  15              		.align	2
+  16              		.global	DAC_DeInit
+  17              		.thumb
+  18              		.thumb_func
+  20              	DAC_DeInit:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 08B5     		push	{r3, lr}
+  24 0002 0121     		movs	r1, #1
+  25 0004 4FF00050 		mov	r0, #536870912
+  26 0008 FFF7FEFF 		bl	RCC_APB1PeriphResetCmd
+  27 000c 4FF00050 		mov	r0, #536870912
+  28 0010 0021     		movs	r1, #0
+  29 0012 BDE80840 		pop	{r3, lr}
+  30 0016 FFF7FEBF 		b	RCC_APB1PeriphResetCmd
+  32 001a 00BF     		.align	2
+  33              		.global	DAC_Init
+  34              		.thumb
+  35              		.thumb_func
+  37              	DAC_Init:
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 0, uses_anonymous_args = 0
+  40              		@ link register save eliminated.
+  41 001c 70B4     		push	{r4, r5, r6}
+  42 001e 91E86000 		ldmia	r1, {r5, r6}
+  43 0022 4FF4E843 		mov	r3, #29696
+  44 0026 8C68     		ldr	r4, [r1, #8]
+  45 0028 CA68     		ldr	r2, [r1, #12]
+  46 002a C4F20003 		movt	r3, 16384
+  47 002e 46EA0501 		orr	r1, r6, r5
+  48 0032 0C43     		orrs	r4, r4, r1
+  49 0034 1E68     		ldr	r6, [r3, #0]
+  50 0036 40F6FE75 		movw	r5, #4094
+  51 003a 8540     		lsls	r5, r5, r0
+  52 003c 2243     		orrs	r2, r2, r4
+  53 003e 26EA0505 		bic	r5, r6, r5
+  54 0042 12FA00F0 		lsls	r0, r2, r0
+  55 0046 2843     		orrs	r0, r0, r5
+  56 0048 1860     		str	r0, [r3, #0]
+  57 004a 70BC     		pop	{r4, r5, r6}
+  58 004c 7047     		bx	lr
+  60 004e 00BF     		.align	2
+  61              		.global	DAC_StructInit
+  62              		.thumb
+  63              		.thumb_func
+  65              	DAC_StructInit:
+  66              		@ args = 0, pretend = 0, frame = 0
+  67              		@ frame_needed = 0, uses_anonymous_args = 0
+  68              		@ link register save eliminated.
+  69 0050 0023     		movs	r3, #0
+  70 0052 0360     		str	r3, [r0, #0]
+  71 0054 4360     		str	r3, [r0, #4]
+  72 0056 8360     		str	r3, [r0, #8]
+  73 0058 C360     		str	r3, [r0, #12]
+  74 005a 7047     		bx	lr
+  76              		.align	2
+  77              		.global	DAC_Cmd
+  78              		.thumb
+  79              		.thumb_func
+  81              	DAC_Cmd:
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84              		@ link register save eliminated.
+  85 005c 4FF4E843 		mov	r3, #29696
+  86 0060 C4F20003 		movt	r3, 16384
+  87 0064 1A68     		ldr	r2, [r3, #0]
+  88 0066 31B9     		cbnz	r1, .L8
+  89 0068 0121     		movs	r1, #1
+  90 006a 11FA00F0 		lsls	r0, r1, r0
+  91 006e 22EA0000 		bic	r0, r2, r0
+  92 0072 1860     		str	r0, [r3, #0]
+  93 0074 7047     		bx	lr
+  94              	.L8:
+  95 0076 0121     		movs	r1, #1
+  96 0078 11FA00F0 		lsls	r0, r1, r0
+  97 007c 1043     		orrs	r0, r0, r2
+  98 007e 1860     		str	r0, [r3, #0]
+  99 0080 7047     		bx	lr
+ 101 0082 00BF     		.align	2
+ 102              		.global	DAC_SoftwareTriggerCmd
+ 103              		.thumb
+ 104              		.thumb_func
+ 106              	DAC_SoftwareTriggerCmd:
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		@ link register save eliminated.
+ 110 0084 4FF4E843 		mov	r3, #29696
+ 111 0088 C4F20003 		movt	r3, 16384
+ 112 008c 0009     		lsrs	r0, r0, #4
+ 113 008e 5A68     		ldr	r2, [r3, #4]
+ 114 0090 31B9     		cbnz	r1, .L12
+ 115 0092 0121     		movs	r1, #1
+ 116 0094 11FA00F0 		lsls	r0, r1, r0
+ 117 0098 22EA0000 		bic	r0, r2, r0
+ 118 009c 5860     		str	r0, [r3, #4]
+ 119 009e 7047     		bx	lr
+ 120              	.L12:
+ 121 00a0 0121     		movs	r1, #1
+ 122 00a2 11FA00F0 		lsls	r0, r1, r0
+ 123 00a6 1043     		orrs	r0, r0, r2
+ 124 00a8 5860     		str	r0, [r3, #4]
+ 125 00aa 7047     		bx	lr
+ 127              		.align	2
+ 128              		.global	DAC_DualSoftwareTriggerCmd
+ 129              		.thumb
+ 130              		.thumb_func
+ 132              	DAC_DualSoftwareTriggerCmd:
+ 133              		@ args = 0, pretend = 0, frame = 0
+ 134              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135              		@ link register save eliminated.
+ 136 00ac 4FF4E843 		mov	r3, #29696
+ 137 00b0 C4F20003 		movt	r3, 16384
+ 138 00b4 5A68     		ldr	r2, [r3, #4]
+ 139 00b6 18B9     		cbnz	r0, .L16
+ 140 00b8 22F00302 		bic	r2, r2, #3
+ 141 00bc 5A60     		str	r2, [r3, #4]
+ 142 00be 7047     		bx	lr
+ 143              	.L16:
+ 144 00c0 42F00302 		orr	r2, r2, #3
+ 145 00c4 5A60     		str	r2, [r3, #4]
+ 146 00c6 7047     		bx	lr
+ 148              		.align	2
+ 149              		.global	DAC_WaveGenerationCmd
+ 150              		.thumb
+ 151              		.thumb_func
+ 153              	DAC_WaveGenerationCmd:
+ 154              		@ args = 0, pretend = 0, frame = 0
+ 155              		@ frame_needed = 0, uses_anonymous_args = 0
+ 156              		@ link register save eliminated.
+ 157 00c8 4FF4E843 		mov	r3, #29696
+ 158 00cc C4F20003 		movt	r3, 16384
+ 159 00d0 8140     		lsls	r1, r1, r0
+ 160 00d2 22B9     		cbnz	r2, .L20
+ 161 00d4 1A68     		ldr	r2, [r3, #0]
+ 162 00d6 22EA0101 		bic	r1, r2, r1
+ 163 00da 1960     		str	r1, [r3, #0]
+ 164 00dc 7047     		bx	lr
+ 165              	.L20:
+ 166 00de 1A68     		ldr	r2, [r3, #0]
+ 167 00e0 1143     		orrs	r1, r1, r2
+ 168 00e2 1960     		str	r1, [r3, #0]
+ 169 00e4 7047     		bx	lr
+ 171 00e6 00BF     		.align	2
+ 172              		.global	DAC_SetChannel1Data
+ 173              		.thumb
+ 174              		.thumb_func
+ 176              	DAC_SetChannel1Data:
+ 177              		@ args = 0, pretend = 0, frame = 8
+ 178              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179              		@ link register save eliminated.
+ 180 00e8 82B0     		sub	sp, sp, #8
+ 181 00ea 4FF4E843 		mov	r3, #29696
+ 182 00ee C4F20003 		movt	r3, 16384
+ 183 00f2 0022     		movs	r2, #0
+ 184 00f4 0192     		str	r2, [sp, #4]
+ 185 00f6 0193     		str	r3, [sp, #4]
+ 186 00f8 019B     		ldr	r3, [sp, #4]
+ 187 00fa 0833     		adds	r3, r3, #8
+ 188 00fc 1B18     		adds	r3, r3, r0
+ 189 00fe 0193     		str	r3, [sp, #4]
+ 190 0100 019B     		ldr	r3, [sp, #4]
+ 191 0102 1960     		str	r1, [r3, #0]
+ 192 0104 02B0     		add	sp, sp, #8
+ 193 0106 7047     		bx	lr
+ 195              		.align	2
+ 196              		.global	DAC_SetChannel2Data
+ 197              		.thumb
+ 198              		.thumb_func
+ 200              	DAC_SetChannel2Data:
+ 201              		@ args = 0, pretend = 0, frame = 8
+ 202              		@ frame_needed = 0, uses_anonymous_args = 0
+ 203              		@ link register save eliminated.
+ 204 0108 82B0     		sub	sp, sp, #8
+ 205 010a 4FF4E843 		mov	r3, #29696
+ 206 010e C4F20003 		movt	r3, 16384
+ 207 0112 0022     		movs	r2, #0
+ 208 0114 0192     		str	r2, [sp, #4]
+ 209 0116 0193     		str	r3, [sp, #4]
+ 210 0118 019B     		ldr	r3, [sp, #4]
+ 211 011a 1433     		adds	r3, r3, #20
+ 212 011c 1B18     		adds	r3, r3, r0
+ 213 011e 0193     		str	r3, [sp, #4]
+ 214 0120 019B     		ldr	r3, [sp, #4]
+ 215 0122 1960     		str	r1, [r3, #0]
+ 216 0124 02B0     		add	sp, sp, #8
+ 217 0126 7047     		bx	lr
+ 219              		.align	2
+ 220              		.global	DAC_SetDualChannelData
+ 221              		.thumb
+ 222              		.thumb_func
+ 224              	DAC_SetDualChannelData:
+ 225              		@ args = 0, pretend = 0, frame = 0
+ 226              		@ frame_needed = 0, uses_anonymous_args = 0
+ 227              		@ link register save eliminated.
+ 228 0128 47F22043 		movw	r3, #29728
+ 229 012c 0828     		cmp	r0, #8
+ 230 012e C4F20003 		movt	r3, 16384
+ 231 0132 0CBF     		ite	eq
+ 232 0134 42EA0121 		orreq	r1, r2, r1, lsl #8
+ 233 0138 42EA0141 		orrne	r1, r2, r1, lsl #16
+ 234 013c C150     		str	r1, [r0, r3]
+ 235 013e 7047     		bx	lr
+ 237              		.align	2
+ 238              		.global	DAC_GetDataOutputValue
+ 239              		.thumb
+ 240              		.thumb_func
+ 242              	DAC_GetDataOutputValue:
+ 243              		@ args = 0, pretend = 0, frame = 8
+ 244              		@ frame_needed = 0, uses_anonymous_args = 0
+ 245              		@ link register save eliminated.
+ 246 0140 82B0     		sub	sp, sp, #8
+ 247 0142 4FF4E843 		mov	r3, #29696
+ 248 0146 C4F20003 		movt	r3, 16384
+ 249 014a 0022     		movs	r2, #0
+ 250 014c 0192     		str	r2, [sp, #4]
+ 251 014e 0193     		str	r3, [sp, #4]
+ 252 0150 019B     		ldr	r3, [sp, #4]
+ 253 0152 2C33     		adds	r3, r3, #44
+ 254 0154 03EB9003 		add	r3, r3, r0, lsr #2
+ 255 0158 0193     		str	r3, [sp, #4]
+ 256 015a 019B     		ldr	r3, [sp, #4]
+ 257 015c 1868     		ldr	r0, [r3, #0]
+ 258 015e 80B2     		uxth	r0, r0
+ 259 0160 02B0     		add	sp, sp, #8
+ 260 0162 7047     		bx	lr
+ 262              		.align	2
+ 263              		.global	DAC_DMACmd
+ 264              		.thumb
+ 265              		.thumb_func
+ 267              	DAC_DMACmd:
+ 268              		@ args = 0, pretend = 0, frame = 0
+ 269              		@ frame_needed = 0, uses_anonymous_args = 0
+ 270              		@ link register save eliminated.
+ 271 0164 4FF4E843 		mov	r3, #29696
+ 272 0168 C4F20003 		movt	r3, 16384
+ 273 016c 1A68     		ldr	r2, [r3, #0]
+ 274 016e 39B9     		cbnz	r1, .L30
+ 275 0170 4FF48051 		mov	r1, #4096
+ 276 0174 11FA00F0 		lsls	r0, r1, r0
+ 277 0178 22EA0000 		bic	r0, r2, r0
+ 278 017c 1860     		str	r0, [r3, #0]
+ 279 017e 7047     		bx	lr
+ 280              	.L30:
+ 281 0180 4FF48051 		mov	r1, #4096
+ 282 0184 11FA00F0 		lsls	r0, r1, r0
+ 283 0188 1043     		orrs	r0, r0, r2
+ 284 018a 1860     		str	r0, [r3, #0]
+ 285 018c 7047     		bx	lr
+ 287 018e 00BF     		.align	2
+ 288              		.global	DAC_ITConfig
+ 289              		.thumb
+ 290              		.thumb_func
+ 292              	DAC_ITConfig:
+ 293              		@ args = 0, pretend = 0, frame = 0
+ 294              		@ frame_needed = 0, uses_anonymous_args = 0
+ 295              		@ link register save eliminated.
+ 296 0190 4FF4E843 		mov	r3, #29696
+ 297 0194 C4F20003 		movt	r3, 16384
+ 298 0198 8140     		lsls	r1, r1, r0
+ 299 019a 22B9     		cbnz	r2, .L34
+ 300 019c 1A68     		ldr	r2, [r3, #0]
+ 301 019e 22EA0101 		bic	r1, r2, r1
+ 302 01a2 1960     		str	r1, [r3, #0]
+ 303 01a4 7047     		bx	lr
+ 304              	.L34:
+ 305 01a6 1A68     		ldr	r2, [r3, #0]
+ 306 01a8 1143     		orrs	r1, r1, r2
+ 307 01aa 1960     		str	r1, [r3, #0]
+ 308 01ac 7047     		bx	lr
+ 310 01ae 00BF     		.align	2
+ 311              		.global	DAC_GetFlagStatus
+ 312              		.thumb
+ 313              		.thumb_func
+ 315              	DAC_GetFlagStatus:
+ 316              		@ args = 0, pretend = 0, frame = 0
+ 317              		@ frame_needed = 0, uses_anonymous_args = 0
+ 318              		@ link register save eliminated.
+ 319 01b0 4FF4E843 		mov	r3, #29696
+ 320 01b4 C4F20003 		movt	r3, 16384
+ 321 01b8 8140     		lsls	r1, r1, r0
+ 322 01ba 5B6B     		ldr	r3, [r3, #52]
+ 323 01bc 1942     		tst	r1, r3
+ 324 01be 0CBF     		ite	eq
+ 325 01c0 0020     		moveq	r0, #0
+ 326 01c2 0120     		movne	r0, #1
+ 327 01c4 7047     		bx	lr
+ 329 01c6 00BF     		.align	2
+ 330              		.global	DAC_ClearFlag
+ 331              		.thumb
+ 332              		.thumb_func
+ 334              	DAC_ClearFlag:
+ 335              		@ args = 0, pretend = 0, frame = 0
+ 336              		@ frame_needed = 0, uses_anonymous_args = 0
+ 337              		@ link register save eliminated.
+ 338 01c8 4FF4E843 		mov	r3, #29696
+ 339 01cc C4F20003 		movt	r3, 16384
+ 340 01d0 8140     		lsls	r1, r1, r0
+ 341 01d2 5963     		str	r1, [r3, #52]
+ 342 01d4 7047     		bx	lr
+ 344 01d6 00BF     		.align	2
+ 345              		.global	DAC_GetITStatus
+ 346              		.thumb
+ 347              		.thumb_func
+ 349              	DAC_GetITStatus:
+ 350              		@ args = 0, pretend = 0, frame = 0
+ 351              		@ frame_needed = 0, uses_anonymous_args = 0
+ 352              		@ link register save eliminated.
+ 353 01d8 4FF4E843 		mov	r3, #29696
+ 354 01dc C4F20003 		movt	r3, 16384
+ 355 01e0 8140     		lsls	r1, r1, r0
+ 356 01e2 1A68     		ldr	r2, [r3, #0]
+ 357 01e4 586B     		ldr	r0, [r3, #52]
+ 358 01e6 0840     		ands	r0, r1, r0
+ 359 01e8 03D0     		beq	.L38
+ 360 01ea 1142     		tst	r1, r2
+ 361 01ec 0CBF     		ite	eq
+ 362 01ee 0020     		moveq	r0, #0
+ 363 01f0 0120     		movne	r0, #1
+ 364              	.L38:
+ 365 01f2 7047     		bx	lr
+ 367              		.align	2
+ 368              		.global	DAC_ClearITPendingBit
+ 369              		.thumb
+ 370              		.thumb_func
+ 372              	DAC_ClearITPendingBit:
+ 373              		@ args = 0, pretend = 0, frame = 0
+ 374              		@ frame_needed = 0, uses_anonymous_args = 0
+ 375              		@ link register save eliminated.
+ 376 01f4 4FF4E843 		mov	r3, #29696
+ 377 01f8 C4F20003 		movt	r3, 16384
+ 378 01fc 8140     		lsls	r1, r1, r0
+ 379 01fe 5963     		str	r1, [r3, #52]
+ 380 0200 7047     		bx	lr
+ 382 0202 00BF     		.ident	"GCC: (Linaro GCC 4.6-2011.10) 4.6.2 20111004 (prerelease)"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 stm32f4xx_dac.c
+     /tmp/cc3Pjr5r.s:15     .text:0000000000000000 $t
+     /tmp/cc3Pjr5r.s:20     .text:0000000000000000 DAC_DeInit
+     /tmp/cc3Pjr5r.s:37     .text:000000000000001c DAC_Init
+     /tmp/cc3Pjr5r.s:65     .text:0000000000000050 DAC_StructInit
+     /tmp/cc3Pjr5r.s:81     .text:000000000000005c DAC_Cmd
+     /tmp/cc3Pjr5r.s:106    .text:0000000000000084 DAC_SoftwareTriggerCmd
+     /tmp/cc3Pjr5r.s:132    .text:00000000000000ac DAC_DualSoftwareTriggerCmd
+     /tmp/cc3Pjr5r.s:153    .text:00000000000000c8 DAC_WaveGenerationCmd
+     /tmp/cc3Pjr5r.s:176    .text:00000000000000e8 DAC_SetChannel1Data
+     /tmp/cc3Pjr5r.s:200    .text:0000000000000108 DAC_SetChannel2Data
+     /tmp/cc3Pjr5r.s:224    .text:0000000000000128 DAC_SetDualChannelData
+     /tmp/cc3Pjr5r.s:242    .text:0000000000000140 DAC_GetDataOutputValue
+     /tmp/cc3Pjr5r.s:267    .text:0000000000000164 DAC_DMACmd
+     /tmp/cc3Pjr5r.s:292    .text:0000000000000190 DAC_ITConfig
+     /tmp/cc3Pjr5r.s:315    .text:00000000000001b0 DAC_GetFlagStatus
+     /tmp/cc3Pjr5r.s:334    .text:00000000000001c8 DAC_ClearFlag
+     /tmp/cc3Pjr5r.s:349    .text:00000000000001d8 DAC_GetITStatus
+     /tmp/cc3Pjr5r.s:372    .text:00000000000001f4 DAC_ClearITPendingBit
+
+UNDEFINED SYMBOLS
+RCC_APB1PeriphResetCmd

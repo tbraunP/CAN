@@ -1,0 +1,114 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"stm32f4xx_crc.c"
+  14              		.text
+  15              		.align	2
+  16              		.global	CRC_ResetDR
+  17              		.thumb
+  18              		.thumb_func
+  20              	CRC_ResetDR:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 4FF44053 		mov	r3, #12288
+  25 0004 C4F20203 		movt	r3, 16386
+  26 0008 0122     		movs	r2, #1
+  27 000a 9A60     		str	r2, [r3, #8]
+  28 000c 7047     		bx	lr
+  30 000e 00BF     		.align	2
+  31              		.global	CRC_CalcCRC
+  32              		.thumb
+  33              		.thumb_func
+  35              	CRC_CalcCRC:
+  36              		@ args = 0, pretend = 0, frame = 0
+  37              		@ frame_needed = 0, uses_anonymous_args = 0
+  38              		@ link register save eliminated.
+  39 0010 4FF44053 		mov	r3, #12288
+  40 0014 C4F20203 		movt	r3, 16386
+  41 0018 1860     		str	r0, [r3, #0]
+  42 001a 1868     		ldr	r0, [r3, #0]
+  43 001c 7047     		bx	lr
+  45 001e 00BF     		.align	2
+  46              		.global	CRC_CalcBlockCRC
+  47              		.thumb
+  48              		.thumb_func
+  50              	CRC_CalcBlockCRC:
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53              		@ link register save eliminated.
+  54 0020 10B4     		push	{r4}
+  55 0022 59B1     		cbz	r1, .L4
+  56 0024 4FF44054 		mov	r4, #12288
+  57 0028 0438     		subs	r0, r0, #4
+  58 002a 0023     		movs	r3, #0
+  59 002c C4F20204 		movt	r4, 16386
+  60              	.L5:
+  61 0030 50F8042F 		ldr	r2, [r0, #4]!
+  62 0034 0133     		adds	r3, r3, #1
+  63 0036 8B42     		cmp	r3, r1
+  64 0038 2260     		str	r2, [r4, #0]
+  65 003a F9D1     		bne	.L5
+  66              	.L4:
+  67 003c 4FF44053 		mov	r3, #12288
+  68 0040 C4F20203 		movt	r3, 16386
+  69 0044 1868     		ldr	r0, [r3, #0]
+  70 0046 10BC     		pop	{r4}
+  71 0048 7047     		bx	lr
+  73 004a 00BF     		.align	2
+  74              		.global	CRC_GetCRC
+  75              		.thumb
+  76              		.thumb_func
+  78              	CRC_GetCRC:
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              		@ link register save eliminated.
+  82 004c 4FF44053 		mov	r3, #12288
+  83 0050 C4F20203 		movt	r3, 16386
+  84 0054 1868     		ldr	r0, [r3, #0]
+  85 0056 7047     		bx	lr
+  87              		.align	2
+  88              		.global	CRC_SetIDRegister
+  89              		.thumb
+  90              		.thumb_func
+  92              	CRC_SetIDRegister:
+  93              		@ args = 0, pretend = 0, frame = 0
+  94              		@ frame_needed = 0, uses_anonymous_args = 0
+  95              		@ link register save eliminated.
+  96 0058 4FF44053 		mov	r3, #12288
+  97 005c C4F20203 		movt	r3, 16386
+  98 0060 1871     		strb	r0, [r3, #4]
+  99 0062 7047     		bx	lr
+ 101              		.align	2
+ 102              		.global	CRC_GetIDRegister
+ 103              		.thumb
+ 104              		.thumb_func
+ 106              	CRC_GetIDRegister:
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		@ link register save eliminated.
+ 110 0064 4FF44053 		mov	r3, #12288
+ 111 0068 C4F20203 		movt	r3, 16386
+ 112 006c 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
+ 113 006e 7047     		bx	lr
+ 115              		.ident	"GCC: (Linaro GCC 4.6-2011.10) 4.6.2 20111004 (prerelease)"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 stm32f4xx_crc.c
+     /tmp/ccp3fB4W.s:15     .text:0000000000000000 $t
+     /tmp/ccp3fB4W.s:20     .text:0000000000000000 CRC_ResetDR
+     /tmp/ccp3fB4W.s:35     .text:0000000000000010 CRC_CalcCRC
+     /tmp/ccp3fB4W.s:50     .text:0000000000000020 CRC_CalcBlockCRC
+     /tmp/ccp3fB4W.s:78     .text:000000000000004c CRC_GetCRC
+     /tmp/ccp3fB4W.s:92     .text:0000000000000058 CRC_SetIDRegister
+     /tmp/ccp3fB4W.s:106    .text:0000000000000064 CRC_GetIDRegister
+
+NO UNDEFINED SYMBOLS

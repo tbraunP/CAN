@@ -1,0 +1,153 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"stm32f4xx_rng.c"
+  14              		.text
+  15              		.align	2
+  16              		.global	RNG_DeInit
+  17              		.thumb
+  18              		.thumb_func
+  20              	RNG_DeInit:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 08B5     		push	{r3, lr}
+  24 0002 4020     		movs	r0, #64
+  25 0004 0121     		movs	r1, #1
+  26 0006 FFF7FEFF 		bl	RCC_AHB2PeriphResetCmd
+  27 000a 4020     		movs	r0, #64
+  28 000c 0021     		movs	r1, #0
+  29 000e BDE80840 		pop	{r3, lr}
+  30 0012 FFF7FEBF 		b	RCC_AHB2PeriphResetCmd
+  32 0016 00BF     		.align	2
+  33              		.global	RNG_Cmd
+  34              		.thumb
+  35              		.thumb_func
+  37              	RNG_Cmd:
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 0, uses_anonymous_args = 0
+  40              		@ link register save eliminated.
+  41 0018 4FF40063 		mov	r3, #2048
+  42 001c C5F20603 		movt	r3, 20486
+  43 0020 1A68     		ldr	r2, [r3, #0]
+  44 0022 18B9     		cbnz	r0, .L6
+  45 0024 22F00402 		bic	r2, r2, #4
+  46 0028 1A60     		str	r2, [r3, #0]
+  47 002a 7047     		bx	lr
+  48              	.L6:
+  49 002c 42F00402 		orr	r2, r2, #4
+  50 0030 1A60     		str	r2, [r3, #0]
+  51 0032 7047     		bx	lr
+  53              		.align	2
+  54              		.global	RNG_GetRandomNumber
+  55              		.thumb
+  56              		.thumb_func
+  58              	RNG_GetRandomNumber:
+  59              		@ args = 0, pretend = 0, frame = 0
+  60              		@ frame_needed = 0, uses_anonymous_args = 0
+  61              		@ link register save eliminated.
+  62 0034 4FF40063 		mov	r3, #2048
+  63 0038 C5F20603 		movt	r3, 20486
+  64 003c 9868     		ldr	r0, [r3, #8]
+  65 003e 7047     		bx	lr
+  67              		.align	2
+  68              		.global	RNG_ITConfig
+  69              		.thumb
+  70              		.thumb_func
+  72              	RNG_ITConfig:
+  73              		@ args = 0, pretend = 0, frame = 0
+  74              		@ frame_needed = 0, uses_anonymous_args = 0
+  75              		@ link register save eliminated.
+  76 0040 4FF40063 		mov	r3, #2048
+  77 0044 C5F20603 		movt	r3, 20486
+  78 0048 1A68     		ldr	r2, [r3, #0]
+  79 004a 18B9     		cbnz	r0, .L11
+  80 004c 22F00802 		bic	r2, r2, #8
+  81 0050 1A60     		str	r2, [r3, #0]
+  82 0052 7047     		bx	lr
+  83              	.L11:
+  84 0054 42F00802 		orr	r2, r2, #8
+  85 0058 1A60     		str	r2, [r3, #0]
+  86 005a 7047     		bx	lr
+  88              		.align	2
+  89              		.global	RNG_GetFlagStatus
+  90              		.thumb
+  91              		.thumb_func
+  93              	RNG_GetFlagStatus:
+  94              		@ args = 0, pretend = 0, frame = 0
+  95              		@ frame_needed = 0, uses_anonymous_args = 0
+  96              		@ link register save eliminated.
+  97 005c 4FF40063 		mov	r3, #2048
+  98 0060 C5F20603 		movt	r3, 20486
+  99 0064 5B68     		ldr	r3, [r3, #4]
+ 100 0066 1842     		tst	r0, r3
+ 101 0068 0CBF     		ite	eq
+ 102 006a 0020     		moveq	r0, #0
+ 103 006c 0120     		movne	r0, #1
+ 104 006e 7047     		bx	lr
+ 106              		.align	2
+ 107              		.global	RNG_ClearFlag
+ 108              		.thumb
+ 109              		.thumb_func
+ 111              	RNG_ClearFlag:
+ 112              		@ args = 0, pretend = 0, frame = 0
+ 113              		@ frame_needed = 0, uses_anonymous_args = 0
+ 114              		@ link register save eliminated.
+ 115 0070 4FF40063 		mov	r3, #2048
+ 116 0074 C5F20603 		movt	r3, 20486
+ 117 0078 6FEA0010 		mvn	r0, r0, lsl #4
+ 118 007c 5860     		str	r0, [r3, #4]
+ 119 007e 7047     		bx	lr
+ 121              		.align	2
+ 122              		.global	RNG_GetITStatus
+ 123              		.thumb
+ 124              		.thumb_func
+ 126              	RNG_GetITStatus:
+ 127              		@ args = 0, pretend = 0, frame = 0
+ 128              		@ frame_needed = 0, uses_anonymous_args = 0
+ 129              		@ link register save eliminated.
+ 130 0080 4FF40063 		mov	r3, #2048
+ 131 0084 C5F20603 		movt	r3, 20486
+ 132 0088 5B68     		ldr	r3, [r3, #4]
+ 133 008a 1842     		tst	r0, r3
+ 134 008c 0CBF     		ite	eq
+ 135 008e 0020     		moveq	r0, #0
+ 136 0090 0120     		movne	r0, #1
+ 137 0092 7047     		bx	lr
+ 139              		.align	2
+ 140              		.global	RNG_ClearITPendingBit
+ 141              		.thumb
+ 142              		.thumb_func
+ 144              	RNG_ClearITPendingBit:
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+ 147              		@ link register save eliminated.
+ 148 0094 4FF40063 		mov	r3, #2048
+ 149 0098 C043     		mvns	r0, r0
+ 150 009a C5F20603 		movt	r3, 20486
+ 151 009e C0B2     		uxtb	r0, r0
+ 152 00a0 5860     		str	r0, [r3, #4]
+ 153 00a2 7047     		bx	lr
+ 155              		.ident	"GCC: (Linaro GCC 4.6-2011.10) 4.6.2 20111004 (prerelease)"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 stm32f4xx_rng.c
+     /tmp/ccInbkZh.s:15     .text:0000000000000000 $t
+     /tmp/ccInbkZh.s:20     .text:0000000000000000 RNG_DeInit
+     /tmp/ccInbkZh.s:37     .text:0000000000000018 RNG_Cmd
+     /tmp/ccInbkZh.s:58     .text:0000000000000034 RNG_GetRandomNumber
+     /tmp/ccInbkZh.s:72     .text:0000000000000040 RNG_ITConfig
+     /tmp/ccInbkZh.s:93     .text:000000000000005c RNG_GetFlagStatus
+     /tmp/ccInbkZh.s:111    .text:0000000000000070 RNG_ClearFlag
+     /tmp/ccInbkZh.s:126    .text:0000000000000080 RNG_GetITStatus
+     /tmp/ccInbkZh.s:144    .text:0000000000000094 RNG_ClearITPendingBit
+
+UNDEFINED SYMBOLS
+RCC_AHB2PeriphResetCmd

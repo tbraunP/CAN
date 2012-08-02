@@ -1,0 +1,226 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"stm32f4xx_cryp_des.c"
+  14              		.text
+  15              		.align	2
+  16              		.global	CRYP_DES_ECB
+  17              		.thumb
+  18              		.thumb_func
+  20              	CRYP_DES_ECB:
+  21              		@ args = 4, pretend = 0, frame = 48
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  24 0004 8CB0     		sub	sp, sp, #48
+  25 0006 0025     		movs	r5, #0
+  26 0008 0646     		mov	r6, r0
+  27 000a 01A8     		add	r0, sp, #4
+  28 000c 0C46     		mov	r4, r1
+  29 000e 1746     		mov	r7, r2
+  30 0010 9846     		mov	r8, r3
+  31 0012 0B95     		str	r5, [sp, #44]
+  32 0014 FFF7FEFF 		bl	CRYP_KeyStructInit
+  33 0018 1023     		movs	r3, #16
+  34 001a ADF82630 		strh	r3, [sp, #38]	@ movhi
+  35 001e 012E     		cmp	r6, #1
+  36 0020 14BF     		ite	ne
+  37 0022 0426     		movne	r6, #4
+  38 0024 2E46     		moveq	r6, r5
+  39 0026 8023     		movs	r3, #128
+  40 0028 09A8     		add	r0, sp, #36
+  41 002a ADF82830 		strh	r3, [sp, #40]	@ movhi
+  42 002e ADF82460 		strh	r6, [sp, #36]	@ movhi
+  43 0032 FFF7FEFF 		bl	CRYP_Init
+  44 0036 2368     		ldr	r3, [r4, #0]
+  45              	@ 352 "//home/pyro/workspace/workspace_STM32/CAN/lib/CMSIS/Include/core_cmInstr.h" 1
+  46 0038 1BBA     		rev r3, r3
+  47              	@ 0 "" 2
+  48              		.thumb
+  49 003a 0393     		str	r3, [sp, #12]
+  50 003c 6368     		ldr	r3, [r4, #4]
+  51              	@ 352 "//home/pyro/workspace/workspace_STM32/CAN/lib/CMSIS/Include/core_cmInstr.h" 1
+  52 003e 1BBA     		rev r3, r3
+  53              	@ 0 "" 2
+  54              		.thumb
+  55 0040 01A8     		add	r0, sp, #4
+  56 0042 0493     		str	r3, [sp, #16]
+  57 0044 FFF7FEFF 		bl	CRYP_KeyInit
+  58 0048 FFF7FEFF 		bl	CRYP_FIFOFlush
+  59 004c 0120     		movs	r0, #1
+  60 004e FFF7FEFF 		bl	CRYP_Cmd
+  61 0052 B8F1000F 		cmp	r8, #0
+  62 0056 2ED0     		beq	.L9
+  63 0058 129C     		ldr	r4, [sp, #72]
+  64 005a 0837     		adds	r7, r7, #8
+  65 005c 0834     		adds	r4, r4, #8
+  66 005e 2E46     		mov	r6, r5
+  67              	.L7:
+  68 0060 57F8080C 		ldr	r0, [r7, #-8]
+  69 0064 FFF7FEFF 		bl	CRYP_DataIn
+  70 0068 57F8040C 		ldr	r0, [r7, #-4]
+  71 006c FFF7FEFF 		bl	CRYP_DataIn
+  72 0070 0B96     		str	r6, [sp, #44]
+  73 0072 00E0     		b	.L5
+  74              	.L14:
+  75 0074 90B1     		cbz	r0, .L6
+  76              	.L5:
+  77 0076 1020     		movs	r0, #16
+  78 0078 FFF7FEFF 		bl	CRYP_GetFlagStatus
+  79 007c 0B9B     		ldr	r3, [sp, #44]
+  80 007e 0133     		adds	r3, r3, #1
+  81 0080 0B93     		str	r3, [sp, #44]
+  82 0082 0B9B     		ldr	r3, [sp, #44]
+  83 0084 B3F5803F 		cmp	r3, #65536
+  84 0088 F4D1     		bne	.L14
+  85 008a 38B1     		cbz	r0, .L6
+  86 008c 0024     		movs	r4, #0
+  87              	.L3:
+  88 008e 0020     		movs	r0, #0
+  89 0090 FFF7FEFF 		bl	CRYP_Cmd
+  90 0094 2046     		mov	r0, r4
+  91 0096 0CB0     		add	sp, sp, #48
+  92 0098 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+  93              	.L6:
+  94 009c FFF7FEFF 		bl	CRYP_DataOut
+  95 00a0 44F8080C 		str	r0, [r4, #-8]
+  96 00a4 FFF7FEFF 		bl	CRYP_DataOut
+  97 00a8 0835     		adds	r5, r5, #8
+  98 00aa 44F8040C 		str	r0, [r4, #-4]
+  99 00ae 0837     		adds	r7, r7, #8
+ 100 00b0 0834     		adds	r4, r4, #8
+ 101 00b2 A845     		cmp	r8, r5
+ 102 00b4 D4D8     		bhi	.L7
+ 103              	.L9:
+ 104 00b6 0124     		movs	r4, #1
+ 105 00b8 E9E7     		b	.L3
+ 107 00ba 00BF     		.align	2
+ 108              		.global	CRYP_DES_CBC
+ 109              		.thumb
+ 110              		.thumb_func
+ 112              	CRYP_DES_CBC:
+ 113              		@ args = 8, pretend = 0, frame = 64
+ 114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115 00bc 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 116 00c0 91B0     		sub	sp, sp, #68
+ 117 00c2 0025     		movs	r5, #0
+ 118 00c4 0646     		mov	r6, r0
+ 119 00c6 01A8     		add	r0, sp, #4
+ 120 00c8 0C46     		mov	r4, r1
+ 121 00ca 1746     		mov	r7, r2
+ 122 00cc 9946     		mov	r9, r3
+ 123 00ce DDF86080 		ldr	r8, [sp, #96]
+ 124 00d2 0F95     		str	r5, [sp, #60]
+ 125 00d4 FFF7FEFF 		bl	CRYP_KeyStructInit
+ 126 00d8 1823     		movs	r3, #24
+ 127 00da ADF83630 		strh	r3, [sp, #54]	@ movhi
+ 128 00de 012E     		cmp	r6, #1
+ 129 00e0 14BF     		ite	ne
+ 130 00e2 0426     		movne	r6, #4
+ 131 00e4 2E46     		moveq	r6, r5
+ 132 00e6 8023     		movs	r3, #128
+ 133 00e8 0DA8     		add	r0, sp, #52
+ 134 00ea ADF83830 		strh	r3, [sp, #56]	@ movhi
+ 135 00ee ADF83460 		strh	r6, [sp, #52]	@ movhi
+ 136 00f2 FFF7FEFF 		bl	CRYP_Init
+ 137 00f6 2368     		ldr	r3, [r4, #0]
+ 138              	@ 352 "//home/pyro/workspace/workspace_STM32/CAN/lib/CMSIS/Include/core_cmInstr.h" 1
+ 139 00f8 1BBA     		rev r3, r3
+ 140              	@ 0 "" 2
+ 141              		.thumb
+ 142 00fa 0393     		str	r3, [sp, #12]
+ 143 00fc 6368     		ldr	r3, [r4, #4]
+ 144              	@ 352 "//home/pyro/workspace/workspace_STM32/CAN/lib/CMSIS/Include/core_cmInstr.h" 1
+ 145 00fe 1BBA     		rev r3, r3
+ 146              	@ 0 "" 2
+ 147              		.thumb
+ 148 0100 01A8     		add	r0, sp, #4
+ 149 0102 0493     		str	r3, [sp, #16]
+ 150 0104 FFF7FEFF 		bl	CRYP_KeyInit
+ 151 0108 3B68     		ldr	r3, [r7, #0]
+ 152              	@ 352 "//home/pyro/workspace/workspace_STM32/CAN/lib/CMSIS/Include/core_cmInstr.h" 1
+ 153 010a 1BBA     		rev r3, r3
+ 154              	@ 0 "" 2
+ 155              		.thumb
+ 156 010c 0993     		str	r3, [sp, #36]
+ 157 010e 7B68     		ldr	r3, [r7, #4]
+ 158              	@ 352 "//home/pyro/workspace/workspace_STM32/CAN/lib/CMSIS/Include/core_cmInstr.h" 1
+ 159 0110 1BBA     		rev r3, r3
+ 160              	@ 0 "" 2
+ 161              		.thumb
+ 162 0112 09A8     		add	r0, sp, #36
+ 163 0114 0A93     		str	r3, [sp, #40]
+ 164 0116 FFF7FEFF 		bl	CRYP_IVInit
+ 165 011a FFF7FEFF 		bl	CRYP_FIFOFlush
+ 166 011e 0120     		movs	r0, #1
+ 167 0120 FFF7FEFF 		bl	CRYP_Cmd
+ 168 0124 B8F1000F 		cmp	r8, #0
+ 169 0128 2FD0     		beq	.L23
+ 170 012a 199E     		ldr	r6, [sp, #100]
+ 171 012c 09F10804 		add	r4, r9, #8
+ 172 0130 0836     		adds	r6, r6, #8
+ 173 0132 2F46     		mov	r7, r5
+ 174              	.L21:
+ 175 0134 54F8080C 		ldr	r0, [r4, #-8]
+ 176 0138 FFF7FEFF 		bl	CRYP_DataIn
+ 177 013c 54F8040C 		ldr	r0, [r4, #-4]
+ 178 0140 FFF7FEFF 		bl	CRYP_DataIn
+ 179 0144 0F97     		str	r7, [sp, #60]
+ 180 0146 00E0     		b	.L19
+ 181              	.L27:
+ 182 0148 90B1     		cbz	r0, .L20
+ 183              	.L19:
+ 184 014a 1020     		movs	r0, #16
+ 185 014c FFF7FEFF 		bl	CRYP_GetFlagStatus
+ 186 0150 0F9B     		ldr	r3, [sp, #60]
+ 187 0152 0133     		adds	r3, r3, #1
+ 188 0154 0F93     		str	r3, [sp, #60]
+ 189 0156 0F9B     		ldr	r3, [sp, #60]
+ 190 0158 B3F5803F 		cmp	r3, #65536
+ 191 015c F4D1     		bne	.L27
+ 192 015e 38B1     		cbz	r0, .L20
+ 193 0160 0024     		movs	r4, #0
+ 194              	.L17:
+ 195 0162 0020     		movs	r0, #0
+ 196 0164 FFF7FEFF 		bl	CRYP_Cmd
+ 197 0168 2046     		mov	r0, r4
+ 198 016a 11B0     		add	sp, sp, #68
+ 199 016c BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 200              	.L20:
+ 201 0170 FFF7FEFF 		bl	CRYP_DataOut
+ 202 0174 46F8080C 		str	r0, [r6, #-8]
+ 203 0178 FFF7FEFF 		bl	CRYP_DataOut
+ 204 017c 0835     		adds	r5, r5, #8
+ 205 017e 46F8040C 		str	r0, [r6, #-4]
+ 206 0182 0834     		adds	r4, r4, #8
+ 207 0184 0836     		adds	r6, r6, #8
+ 208 0186 A845     		cmp	r8, r5
+ 209 0188 D4D8     		bhi	.L21
+ 210              	.L23:
+ 211 018a 0124     		movs	r4, #1
+ 212 018c E9E7     		b	.L17
+ 214 018e 00BF     		.ident	"GCC: (Linaro GCC 4.6-2011.10) 4.6.2 20111004 (prerelease)"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 stm32f4xx_cryp_des.c
+     /tmp/ccBAHJBg.s:15     .text:0000000000000000 $t
+     /tmp/ccBAHJBg.s:20     .text:0000000000000000 CRYP_DES_ECB
+     /tmp/ccBAHJBg.s:112    .text:00000000000000bc CRYP_DES_CBC
+
+UNDEFINED SYMBOLS
+CRYP_KeyStructInit
+CRYP_Init
+CRYP_KeyInit
+CRYP_FIFOFlush
+CRYP_Cmd
+CRYP_DataIn
+CRYP_GetFlagStatus
+CRYP_DataOut
+CRYP_IVInit

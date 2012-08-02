@@ -1,0 +1,408 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"uart.c"
+  14              		.text
+  15              		.align	2
+  16              		.global	Q_UART_configDMA
+  17              		.thumb
+  18              		.thumb_func
+  20              	Q_UART_configDMA:
+  21              		@ args = 0, pretend = 0, frame = 8
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 10B5     		push	{r4, lr}
+  24 0002 0121     		movs	r1, #1
+  25 0004 82B0     		sub	sp, sp, #8
+  26 0006 4FF40010 		mov	r0, #2097152
+  27 000a FFF7FEFF 		bl	RCC_AHB1PeriphClockCmd
+  28 000e 40F20004 		movw	r4, #:lower16:USART2_DMA_InitStruct
+  29 0012 46F2A000 		movw	r0, #24736
+  30 0016 C0F20004 		movt	r4, #:upper16:USART2_DMA_InitStruct
+  31 001a C4F20200 		movt	r0, 16386
+  32 001e FFF7FEFF 		bl	DMA_DeInit
+  33 0022 2046     		mov	r0, r4
+  34 0024 FFF7FEFF 		bl	DMA_StructInit
+  35 0028 0023     		movs	r3, #0
+  36 002a 6361     		str	r3, [r4, #20]
+  37 002c A362     		str	r3, [r4, #40]
+  38 002e E361     		str	r3, [r4, #28]
+  39 0030 2362     		str	r3, [r4, #32]
+  40 0032 44F20442 		movw	r2, #17412
+  41 0036 0423     		movs	r3, #4
+  42 0038 C4F20002 		movt	r2, 16384
+  43 003c 4FF00061 		mov	r1, #134217728
+  44 0040 E362     		str	r3, [r4, #44]
+  45 0042 1123     		movs	r3, #17
+  46 0044 84E80600 		stmia	r4, {r1, r2}
+  47 0048 8DF80430 		strb	r3, [sp, #4]
+  48 004c 4022     		movs	r2, #64
+  49 004e 0123     		movs	r3, #1
+  50 0050 E260     		str	r2, [r4, #12]
+  51 0052 8DF80730 		strb	r3, [sp, #7]
+  52 0056 4FF48062 		mov	r2, #1024
+  53 005a 0A23     		movs	r3, #10
+  54 005c 01A8     		add	r0, sp, #4
+  55 005e A261     		str	r2, [r4, #24]
+  56 0060 8DF80530 		strb	r3, [sp, #5]
+  57 0064 FFF7FEFF 		bl	NVIC_Init
+  58 0068 02B0     		add	sp, sp, #8
+  59 006a 10BD     		pop	{r4, pc}
+  61              		.align	2
+  62              		.global	Q_UART_init
+  63              		.thumb
+  64              		.thumb_func
+  66              	Q_UART_init:
+  67              		@ args = 0, pretend = 0, frame = 32
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69 006c 70B5     		push	{r4, r5, r6, lr}
+  70 006e 0121     		movs	r1, #1
+  71 0070 88B0     		sub	sp, sp, #32
+  72 0072 4FF40030 		mov	r0, #131072
+  73 0076 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  74 007a 0024     		movs	r4, #0
+  75 007c 0120     		movs	r0, #1
+  76 007e C4F20204 		movt	r4, 16386
+  77 0082 0146     		mov	r1, r0
+  78 0084 FFF7FEFF 		bl	RCC_AHB1PeriphClockCmd
+  79 0088 0221     		movs	r1, #2
+  80 008a 0722     		movs	r2, #7
+  81 008c 2046     		mov	r0, r4
+  82 008e FFF7FEFF 		bl	GPIO_PinAFConfig
+  83 0092 0722     		movs	r2, #7
+  84 0094 0321     		movs	r1, #3
+  85 0096 2046     		mov	r0, r4
+  86 0098 FFF7FEFF 		bl	GPIO_PinAFConfig
+  87 009c 05A8     		add	r0, sp, #20
+  88 009e FFF7FEFF 		bl	GPIO_StructInit
+  89 00a2 4FF48845 		mov	r5, #17408
+  90 00a6 0C23     		movs	r3, #12
+  91 00a8 05A9     		add	r1, sp, #20
+  92 00aa C4F20005 		movt	r5, 16384
+  93 00ae 2046     		mov	r0, r4
+  94 00b0 0593     		str	r3, [sp, #20]
+  95 00b2 0223     		movs	r3, #2
+  96 00b4 8DF81830 		strb	r3, [sp, #24]
+  97 00b8 FFF7FEFF 		bl	GPIO_Init
+  98 00bc 2846     		mov	r0, r5
+  99 00be FFF7FEFF 		bl	USART_DeInit
+ 100 00c2 01A8     		add	r0, sp, #4
+ 101 00c4 FFF7FEFF 		bl	USART_StructInit
+ 102 00c8 4FF4E133 		mov	r3, #115200
+ 103 00cc 2846     		mov	r0, r5
+ 104 00ce 01A9     		add	r1, sp, #4
+ 105 00d0 0193     		str	r3, [sp, #4]
+ 106 00d2 FFF7FEFF 		bl	USART_Init
+ 107 00d6 0121     		movs	r1, #1
+ 108 00d8 4FF40010 		mov	r0, #2097152
+ 109 00dc FFF7FEFF 		bl	RCC_AHB1PeriphClockCmd
+ 110 00e0 40F20004 		movw	r4, #:lower16:USART2_DMA_InitStruct
+ 111 00e4 46F2A000 		movw	r0, #24736
+ 112 00e8 C0F20004 		movt	r4, #:upper16:USART2_DMA_InitStruct
+ 113 00ec C4F20200 		movt	r0, 16386
+ 114 00f0 FFF7FEFF 		bl	DMA_DeInit
+ 115 00f4 2046     		mov	r0, r4
+ 116 00f6 FFF7FEFF 		bl	DMA_StructInit
+ 117 00fa 44F20442 		movw	r2, #17412
+ 118 00fe 0023     		movs	r3, #0
+ 119 0100 4FF00061 		mov	r1, #134217728
+ 120 0104 C4F20002 		movt	r2, 16384
+ 121 0108 84E80600 		stmia	r4, {r1, r2}
+ 122 010c 6361     		str	r3, [r4, #20]
+ 123 010e 4022     		movs	r2, #64
+ 124 0110 A362     		str	r3, [r4, #40]
+ 125 0112 E361     		str	r3, [r4, #28]
+ 126 0114 2362     		str	r3, [r4, #32]
+ 127 0116 0423     		movs	r3, #4
+ 128 0118 E260     		str	r2, [r4, #12]
+ 129 011a E362     		str	r3, [r4, #44]
+ 130 011c 4FF48062 		mov	r2, #1024
+ 131 0120 1123     		movs	r3, #17
+ 132 0122 0126     		movs	r6, #1
+ 133 0124 07A8     		add	r0, sp, #28
+ 134 0126 8DF81C30 		strb	r3, [sp, #28]
+ 135 012a A261     		str	r2, [r4, #24]
+ 136 012c 0A23     		movs	r3, #10
+ 137 012e 8DF81F60 		strb	r6, [sp, #31]
+ 138 0132 8DF81D30 		strb	r3, [sp, #29]
+ 139 0136 FFF7FEFF 		bl	NVIC_Init
+ 140 013a 2846     		mov	r0, r5
+ 141 013c 3146     		mov	r1, r6
+ 142 013e FFF7FEFF 		bl	USART_Cmd
+ 143 0142 08B0     		add	sp, sp, #32
+ 144 0144 70BD     		pop	{r4, r5, r6, pc}
+ 146 0146 00BF     		.align	2
+ 147              		.global	Q_UART_sendZTString
+ 148              		.thumb
+ 149              		.thumb_func
+ 151              	Q_UART_sendZTString:
+ 152              		@ args = 0, pretend = 0, frame = 0
+ 153              		@ frame_needed = 0, uses_anonymous_args = 0
+ 154 0148 10B5     		push	{r4, lr}
+ 155 014a 0446     		mov	r4, r0
+ 156              	.L4:
+ 157 014c 4FF48840 		mov	r0, #17408
+ 158 0150 4021     		movs	r1, #64
+ 159 0152 C4F20000 		movt	r0, 16384
+ 160 0156 FFF7FEFF 		bl	USART_GetFlagStatus
+ 161 015a 0128     		cmp	r0, #1
+ 162 015c F6D1     		bne	.L4
+ 163 015e 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 164 0160 A3B1     		cbz	r3, .L10
+ 165 0162 013C     		subs	r4, r4, #1
+ 166              	.L14:
+ 167 0164 4FF48840 		mov	r0, #17408
+ 168 0168 8021     		movs	r1, #128
+ 169 016a C4F20000 		movt	r0, 16384
+ 170 016e FFF7FEFF 		bl	USART_GetFlagStatus
+ 171 0172 0128     		cmp	r0, #1
+ 172 0174 F6D1     		bne	.L14
+ 173 0176 14F8011F 		ldrb	r1, [r4, #1]!	@ zero_extendqisi2
+ 174 017a 4FF48840 		mov	r0, #17408
+ 175 017e C4F20000 		movt	r0, 16384
+ 176 0182 FFF7FEFF 		bl	USART_SendData
+ 177 0186 6378     		ldrb	r3, [r4, #1]	@ zero_extendqisi2
+ 178 0188 002B     		cmp	r3, #0
+ 179 018a EBD1     		bne	.L14
+ 180              	.L10:
+ 181 018c 4FF48840 		mov	r0, #17408
+ 182 0190 4021     		movs	r1, #64
+ 183 0192 C4F20000 		movt	r0, 16384
+ 184 0196 FFF7FEFF 		bl	USART_GetFlagStatus
+ 185 019a 0128     		cmp	r0, #1
+ 186 019c F6D1     		bne	.L10
+ 187 019e 10BD     		pop	{r4, pc}
+ 189              		.align	2
+ 190              		.global	Q_UART_DMAsendZTString
+ 191              		.thumb
+ 192              		.thumb_func
+ 194              	Q_UART_DMAsendZTString:
+ 195              		@ args = 0, pretend = 0, frame = 0
+ 196              		@ frame_needed = 0, uses_anonymous_args = 0
+ 197 01a0 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 198 01a4 8046     		mov	r8, r0
+ 199 01a6 FFF7FEFF 		bl	strlen
+ 200 01aa 051E     		subs	r5, r0, #0
+ 201 01ac 1EDD     		ble	.L16
+ 202 01ae 4FF46143 		mov	r3, #57600
+ 203 01b2 CEF20003 		movt	r3, 57344
+ 204 01b6 4FF40032 		mov	r2, #131072
+ 205 01ba 6F1C     		adds	r7, r5, #1
+ 206 01bc C3F88020 		str	r2, [r3, #128]
+ 207 01c0 3846     		mov	r0, r7
+ 208 01c2 FFF7FEFF 		bl	malloc
+ 209 01c6 234C     		ldr	r4, .L21
+ 210 01c8 4146     		mov	r1, r8
+ 211 01ca 3A46     		mov	r2, r7
+ 212 01cc 0646     		mov	r6, r0
+ 213 01ce FFF7FEFF 		bl	memcpy
+ 214 01d2 2368     		ldr	r3, [r4, #0]
+ 215 01d4 63B1     		cbz	r3, .L20
+ 216 01d6 2068     		ldr	r0, [r4, #0]
+ 217 01d8 3146     		mov	r1, r6
+ 218 01da FFF7FEFF 		bl	list_append
+ 219              	.L19:
+ 220 01de 4FF46143 		mov	r3, #57600
+ 221 01e2 CEF20003 		movt	r3, 57344
+ 222 01e6 4FF40032 		mov	r2, #131072
+ 223 01ea 1A60     		str	r2, [r3, #0]
+ 224              	.L16:
+ 225 01ec BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 226              	.L20:
+ 227 01f0 3046     		mov	r0, r6
+ 228 01f2 FFF7FEFF 		bl	list_create
+ 229 01f6 2060     		str	r0, [r4, #0]
+ 230 01f8 2268     		ldr	r2, [r4, #0]
+ 231 01fa 174B     		ldr	r3, .L21+4
+ 232 01fc 1268     		ldr	r2, [r2, #0]
+ 233 01fe 1D61     		str	r5, [r3, #16]
+ 234 0200 46F2A000 		movw	r0, #24736
+ 235 0204 1946     		mov	r1, r3
+ 236 0206 9A60     		str	r2, [r3, #8]
+ 237 0208 C4F20200 		movt	r0, 16386
+ 238 020c FFF7FEFF 		bl	DMA_Init
+ 239 0210 46F2A000 		movw	r0, #24736
+ 240 0214 0122     		movs	r2, #1
+ 241 0216 1021     		movs	r1, #16
+ 242 0218 C4F20200 		movt	r0, 16386
+ 243 021c FFF7FEFF 		bl	DMA_ITConfig
+ 244 0220 46F2A000 		movw	r0, #24736
+ 245 0224 4FF40041 		mov	r1, #32768
+ 246 0228 C4F20200 		movt	r0, 16386
+ 247 022c C2F22001 		movt	r1, 8224
+ 248 0230 FFF7FEFF 		bl	DMA_ClearITPendingBit
+ 249 0234 46F2A000 		movw	r0, #24736
+ 250 0238 0121     		movs	r1, #1
+ 251 023a C4F20200 		movt	r0, 16386
+ 252 023e FFF7FEFF 		bl	DMA_Cmd
+ 253 0242 4FF48840 		mov	r0, #17408
+ 254 0246 C4F20000 		movt	r0, 16384
+ 255 024a 8021     		movs	r1, #128
+ 256 024c 0122     		movs	r2, #1
+ 257 024e FFF7FEFF 		bl	USART_DMACmd
+ 258 0252 C4E7     		b	.L19
+ 259              	.L22:
+ 260              		.align	2
+ 261              	.L21:
+ 262 0254 00000000 		.word	lst
+ 263 0258 00000000 		.word	USART2_DMA_InitStruct
+ 265              		.align	2
+ 266              		.global	Q_UART_DMA_TXComplete
+ 267              		.thumb
+ 268              		.thumb_func
+ 270              	Q_UART_DMA_TXComplete:
+ 271              		@ args = 0, pretend = 0, frame = 8
+ 272              		@ frame_needed = 0, uses_anonymous_args = 0
+ 273 025c 30B5     		push	{r4, r5, lr}
+ 274 025e 83B0     		sub	sp, sp, #12
+ 275              	.L24:
+ 276 0260 4FF48840 		mov	r0, #17408
+ 277 0264 C4F20000 		movt	r0, 16384
+ 278 0268 0121     		movs	r1, #1
+ 279 026a FFF7FEFF 		bl	USART_GetFlagStatus
+ 280 026e 0028     		cmp	r0, #0
+ 281 0270 F6D1     		bne	.L24
+ 282              	.L28:
+ 283 0272 4FF48840 		mov	r0, #17408
+ 284 0276 4021     		movs	r1, #64
+ 285 0278 C4F20000 		movt	r0, 16384
+ 286 027c FFF7FEFF 		bl	USART_GetFlagStatus
+ 287 0280 0128     		cmp	r0, #1
+ 288 0282 F6D1     		bne	.L28
+ 289 0284 4FF48840 		mov	r0, #17408
+ 290 0288 0022     		movs	r2, #0
+ 291 028a C4F20000 		movt	r0, 16384
+ 292 028e 8021     		movs	r1, #128
+ 293 0290 FFF7FEFF 		bl	USART_DMACmd
+ 294 0294 46F2A000 		movw	r0, #24736
+ 295 0298 C4F20200 		movt	r0, 16386
+ 296 029c 0021     		movs	r1, #0
+ 297 029e FFF7FEFF 		bl	DMA_Cmd
+ 298 02a2 46F2A000 		movw	r0, #24736
+ 299 02a6 0022     		movs	r2, #0
+ 300 02a8 C4F20200 		movt	r0, 16386
+ 301 02ac 1021     		movs	r1, #16
+ 302 02ae FFF7FEFF 		bl	DMA_ITConfig
+ 303 02b2 46F2A000 		movw	r0, #24736
+ 304 02b6 4FF40041 		mov	r1, #32768
+ 305 02ba C2F22001 		movt	r1, 8224
+ 306 02be C4F20200 		movt	r0, 16386
+ 307 02c2 FFF7FEFF 		bl	DMA_ClearITPendingBit
+ 308 02c6 2B4D     		ldr	r5, .L32
+ 309 02c8 46F2A000 		movw	r0, #24736
+ 310 02cc C4F20200 		movt	r0, 16386
+ 311 02d0 FFF7FEFF 		bl	DMA_DeInit
+ 312 02d4 2B68     		ldr	r3, [r5, #0]
+ 313 02d6 5B68     		ldr	r3, [r3, #4]
+ 314 02d8 0193     		str	r3, [sp, #4]
+ 315 02da 2B68     		ldr	r3, [r5, #0]
+ 316 02dc 1868     		ldr	r0, [r3, #0]
+ 317 02de FFF7FEFF 		bl	free
+ 318 02e2 2868     		ldr	r0, [r5, #0]
+ 319 02e4 FFF7FEFF 		bl	free
+ 320 02e8 019B     		ldr	r3, [sp, #4]
+ 321 02ea 2B60     		str	r3, [r5, #0]
+ 322              	.L26:
+ 323 02ec 4FF48840 		mov	r0, #17408
+ 324 02f0 4021     		movs	r1, #64
+ 325 02f2 C4F20000 		movt	r0, 16384
+ 326 02f6 FFF7FEFF 		bl	USART_GetFlagStatus
+ 327 02fa 0128     		cmp	r0, #1
+ 328 02fc 0446     		mov	r4, r0
+ 329 02fe F5D1     		bne	.L26
+ 330 0300 2B68     		ldr	r3, [r5, #0]
+ 331 0302 1C4D     		ldr	r5, .L32
+ 332 0304 002B     		cmp	r3, #0
+ 333 0306 33D0     		beq	.L23
+ 334 0308 2B68     		ldr	r3, [r5, #0]
+ 335 030a 1868     		ldr	r0, [r3, #0]
+ 336 030c FFF7FEFF 		bl	strlen
+ 337 0310 2A68     		ldr	r2, [r5, #0]
+ 338 0312 194B     		ldr	r3, .L32+4
+ 339 0314 1268     		ldr	r2, [r2, #0]
+ 340 0316 1861     		str	r0, [r3, #16]
+ 341 0318 46F2A000 		movw	r0, #24736
+ 342 031c 1946     		mov	r1, r3
+ 343 031e 9A60     		str	r2, [r3, #8]
+ 344 0320 C4F20200 		movt	r0, 16386
+ 345 0324 FFF7FEFF 		bl	DMA_Init
+ 346 0328 46F2A000 		movw	r0, #24736
+ 347 032c 2246     		mov	r2, r4
+ 348 032e 1021     		movs	r1, #16
+ 349 0330 C4F20200 		movt	r0, 16386
+ 350 0334 FFF7FEFF 		bl	DMA_ITConfig
+ 351 0338 46F2A000 		movw	r0, #24736
+ 352 033c 4FF40041 		mov	r1, #32768
+ 353 0340 C4F20200 		movt	r0, 16386
+ 354 0344 C2F22001 		movt	r1, 8224
+ 355 0348 FFF7FEFF 		bl	DMA_ClearITPendingBit
+ 356 034c 46F2A000 		movw	r0, #24736
+ 357 0350 2146     		mov	r1, r4
+ 358 0352 C4F20200 		movt	r0, 16386
+ 359 0356 FFF7FEFF 		bl	DMA_Cmd
+ 360 035a 4FF48840 		mov	r0, #17408
+ 361 035e C4F20000 		movt	r0, 16384
+ 362 0362 8021     		movs	r1, #128
+ 363 0364 2246     		mov	r2, r4
+ 364 0366 03B0     		add	sp, sp, #12
+ 365 0368 BDE83040 		pop	{r4, r5, lr}
+ 366 036c FFF7FEBF 		b	USART_DMACmd
+ 367              	.L23:
+ 368 0370 03B0     		add	sp, sp, #12
+ 369 0372 30BD     		pop	{r4, r5, pc}
+ 370              	.L33:
+ 371              		.align	2
+ 372              	.L32:
+ 373 0374 00000000 		.word	lst
+ 374 0378 00000000 		.word	USART2_DMA_InitStruct
+ 376              		.comm	USART2_DMA_InitStruct,60,4
+ 377              		.comm	lst,4,4
+ 378              		.ident	"GCC: (Linaro GCC 4.6-2011.10) 4.6.2 20111004 (prerelease)"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 uart.c
+     /tmp/ccud7Elw.s:15     .text:0000000000000000 $t
+     /tmp/ccud7Elw.s:20     .text:0000000000000000 Q_UART_configDMA
+                            *COM*:000000000000003c USART2_DMA_InitStruct
+     /tmp/ccud7Elw.s:66     .text:000000000000006c Q_UART_init
+     /tmp/ccud7Elw.s:151    .text:0000000000000148 Q_UART_sendZTString
+     /tmp/ccud7Elw.s:194    .text:00000000000001a0 Q_UART_DMAsendZTString
+     /tmp/ccud7Elw.s:262    .text:0000000000000254 $d
+                            *COM*:0000000000000004 lst
+     /tmp/ccud7Elw.s:265    .text:000000000000025c $t
+     /tmp/ccud7Elw.s:270    .text:000000000000025c Q_UART_DMA_TXComplete
+     /tmp/ccud7Elw.s:373    .text:0000000000000374 $d
+
+UNDEFINED SYMBOLS
+RCC_AHB1PeriphClockCmd
+DMA_DeInit
+DMA_StructInit
+NVIC_Init
+RCC_APB1PeriphClockCmd
+GPIO_PinAFConfig
+GPIO_StructInit
+GPIO_Init
+USART_DeInit
+USART_StructInit
+USART_Init
+USART_Cmd
+USART_GetFlagStatus
+USART_SendData
+strlen
+malloc
+memcpy
+list_append
+list_create
+DMA_Init
+DMA_ITConfig
+DMA_ClearITPendingBit
+DMA_Cmd
+USART_DMACmd
+free

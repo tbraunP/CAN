@@ -1,0 +1,225 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"system_stm32f4xx.c"
+  14              		.text
+  15              		.align	2
+  16              		.global	SystemInit
+  17              		.thumb
+  18              		.thumb_func
+  20              	SystemInit:
+  21              		@ args = 0, pretend = 0, frame = 8
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 4FF46053 		mov	r3, #14336
+  25 0004 C4F20203 		movt	r3, 16386
+  26 0008 0022     		movs	r2, #0
+  27 000a 1968     		ldr	r1, [r3, #0]
+  28 000c 41F00101 		orr	r1, r1, #1
+  29 0010 1960     		str	r1, [r3, #0]
+  30 0012 9A60     		str	r2, [r3, #8]
+  31 0014 1868     		ldr	r0, [r3, #0]
+  32 0016 43F21001 		movw	r1, #12304
+  33 001a 20F08470 		bic	r0, r0, #17301504
+  34 001e C2F20041 		movt	r1, 9216
+  35 0022 20F48030 		bic	r0, r0, #65536
+  36 0026 1860     		str	r0, [r3, #0]
+  37 0028 5960     		str	r1, [r3, #4]
+  38 002a 1968     		ldr	r1, [r3, #0]
+  39 002c 82B0     		sub	sp, sp, #8
+  40 002e 21F48021 		bic	r1, r1, #262144
+  41 0032 1960     		str	r1, [r3, #0]
+  42 0034 DA60     		str	r2, [r3, #12]
+  43 0036 0092     		str	r2, [sp, #0]
+  44 0038 0192     		str	r2, [sp, #4]
+  45 003a 1A68     		ldr	r2, [r3, #0]
+  46 003c 42F48032 		orr	r2, r2, #65536
+  47 0040 1A60     		str	r2, [r3, #0]
+  48 0042 1A46     		mov	r2, r3
+  49 0044 03E0     		b	.L3
+  50              	.L13:
+  51 0046 009B     		ldr	r3, [sp, #0]
+  52 0048 B3F5A06F 		cmp	r3, #1280
+  53 004c 09D0     		beq	.L2
+  54              	.L3:
+  55 004e 1368     		ldr	r3, [r2, #0]
+  56 0050 03F40033 		and	r3, r3, #131072
+  57 0054 0193     		str	r3, [sp, #4]
+  58 0056 009B     		ldr	r3, [sp, #0]
+  59 0058 0133     		adds	r3, r3, #1
+  60 005a 0093     		str	r3, [sp, #0]
+  61 005c 019B     		ldr	r3, [sp, #4]
+  62 005e 002B     		cmp	r3, #0
+  63 0060 F1D0     		beq	.L13
+  64              	.L2:
+  65 0062 4FF46053 		mov	r3, #14336
+  66 0066 C4F20203 		movt	r3, 16386
+  67 006a 1B68     		ldr	r3, [r3, #0]
+  68 006c 13F40033 		ands	r3, r3, #131072
+  69 0070 08BF     		it	eq
+  70 0072 0193     		streq	r3, [sp, #4]
+  71 0074 01D0     		beq	.L5
+  72 0076 0123     		movs	r3, #1
+  73 0078 0193     		str	r3, [sp, #4]
+  74              	.L5:
+  75 007a 019B     		ldr	r3, [sp, #4]
+  76 007c 012B     		cmp	r3, #1
+  77 007e 08D0     		beq	.L14
+  78              	.L6:
+  79 0080 4FF46D43 		mov	r3, #60672
+  80 0084 CEF20003 		movt	r3, 57344
+  81 0088 4FF00062 		mov	r2, #134217728
+  82 008c 9A60     		str	r2, [r3, #8]
+  83 008e 02B0     		add	sp, sp, #8
+  84 0090 7047     		bx	lr
+  85              	.L14:
+  86 0092 4FF46053 		mov	r3, #14336
+  87 0096 C4F20203 		movt	r3, 16386
+  88 009a 4FF4E042 		mov	r2, #28672
+  89 009e 196C     		ldr	r1, [r3, #64]
+  90 00a0 C4F20002 		movt	r2, 16384
+  91 00a4 41F08051 		orr	r1, r1, #268435456
+  92 00a8 1964     		str	r1, [r3, #64]
+  93 00aa 1168     		ldr	r1, [r2, #0]
+  94 00ac 41F48041 		orr	r1, r1, #16384
+  95 00b0 1160     		str	r1, [r2, #0]
+  96 00b2 9A68     		ldr	r2, [r3, #8]
+  97 00b4 9A60     		str	r2, [r3, #8]
+  98 00b6 9A68     		ldr	r2, [r3, #8]
+  99 00b8 42F40042 		orr	r2, r2, #32768
+ 100 00bc 9A60     		str	r2, [r3, #8]
+ 101 00be 9968     		ldr	r1, [r3, #8]
+ 102 00c0 45F20842 		movw	r2, #21512
+ 103 00c4 41F4A051 		orr	r1, r1, #5120
+ 104 00c8 C0F24072 		movt	r2, 1856
+ 105 00cc 9960     		str	r1, [r3, #8]
+ 106 00ce 5A60     		str	r2, [r3, #4]
+ 107 00d0 1A68     		ldr	r2, [r3, #0]
+ 108 00d2 42F08072 		orr	r2, r2, #16777216
+ 109 00d6 1A60     		str	r2, [r3, #0]
+ 110 00d8 1946     		mov	r1, r3
+ 111              	.L7:
+ 112 00da 0A68     		ldr	r2, [r1, #0]
+ 113 00dc 4FF46053 		mov	r3, #14336
+ 114 00e0 9201     		lsls	r2, r2, #6
+ 115 00e2 C4F20203 		movt	r3, 16386
+ 116 00e6 F8D5     		bpl	.L7
+ 117 00e8 4FF47052 		mov	r2, #15360
+ 118 00ec C4F20202 		movt	r2, 16386
+ 119 00f0 40F20561 		movw	r1, #1541
+ 120 00f4 1160     		str	r1, [r2, #0]
+ 121 00f6 9A68     		ldr	r2, [r3, #8]
+ 122 00f8 22F00302 		bic	r2, r2, #3
+ 123 00fc 9A60     		str	r2, [r3, #8]
+ 124 00fe 9A68     		ldr	r2, [r3, #8]
+ 125 0100 42F00202 		orr	r2, r2, #2
+ 126 0104 9A60     		str	r2, [r3, #8]
+ 127              	.L8:
+ 128 0106 9A68     		ldr	r2, [r3, #8]
+ 129 0108 02F00C02 		and	r2, r2, #12
+ 130 010c 082A     		cmp	r2, #8
+ 131 010e FAD1     		bne	.L8
+ 132 0110 B6E7     		b	.L6
+ 134 0112 00BF     		.align	2
+ 135              		.global	SystemCoreClockUpdate
+ 136              		.thumb
+ 137              		.thumb_func
+ 139              	SystemCoreClockUpdate:
+ 140              		@ args = 0, pretend = 0, frame = 0
+ 141              		@ frame_needed = 0, uses_anonymous_args = 0
+ 142              		@ link register save eliminated.
+ 143 0114 4FF46053 		mov	r3, #14336
+ 144 0118 C4F20203 		movt	r3, 16386
+ 145 011c 9A68     		ldr	r2, [r3, #8]
+ 146 011e 02F00C02 		and	r2, r2, #12
+ 147 0122 042A     		cmp	r2, #4
+ 148 0124 04BF     		itt	eq
+ 149 0126 4FF49051 		moveq	r1, #4608
+ 150 012a C0F27A01 		movteq	r1, 122
+ 151 012e 06D0     		beq	.L16
+ 152 0130 082A     		cmp	r2, #8
+ 153 0132 1CBF     		itt	ne
+ 154 0134 4FF41051 		movne	r1, #9216
+ 155 0138 C0F2F401 		movtne	r1, 244
+ 156 013c 0BD0     		beq	.L23
+ 157              	.L16:
+ 158 013e 4FF46052 		mov	r2, #14336
+ 159 0142 C4F20202 		movt	r2, 16386
+ 160 0146 154B     		ldr	r3, .L24
+ 161 0148 9268     		ldr	r2, [r2, #8]
+ 162 014a C2F30312 		ubfx	r2, r2, #4, #4
+ 163 014e 9A5C     		ldrb	r2, [r3, r2]	@ zero_extendqisi2
+ 164 0150 D140     		lsrs	r1, r1, r2
+ 165 0152 1961     		str	r1, [r3, #16]
+ 166 0154 7047     		bx	lr
+ 167              	.L23:
+ 168 0156 5868     		ldr	r0, [r3, #4]
+ 169 0158 5A68     		ldr	r2, [r3, #4]
+ 170 015a 10F4800F 		tst	r0, #4194304
+ 171 015e 5868     		ldr	r0, [r3, #4]
+ 172 0160 15BF     		itete	ne
+ 173 0162 4FF49053 		movne	r3, #4608
+ 174 0166 4FF41053 		moveq	r3, #9216
+ 175 016a C0F27A03 		movtne	r3, 122
+ 176 016e C0F2F403 		movteq	r3, 244
+ 177 0172 02F03F02 		and	r2, r2, #63
+ 178 0176 B3FBF2F1 		udiv	r1, r3, r2
+ 179 017a 4FF46053 		mov	r3, #14336
+ 180 017e C4F20203 		movt	r3, 16386
+ 181 0182 C0F38810 		ubfx	r0, r0, #6, #9
+ 182 0186 5B68     		ldr	r3, [r3, #4]
+ 183 0188 C3F30143 		ubfx	r3, r3, #16, #2
+ 184 018c 0133     		adds	r3, r3, #1
+ 185 018e 01FB00F1 		mul	r1, r1, r0
+ 186 0192 5B00     		lsls	r3, r3, #1
+ 187 0194 B1FBF3F1 		udiv	r1, r1, r3
+ 188 0198 D1E7     		b	.L16
+ 189              	.L25:
+ 190 019a 00BF     		.align	2
+ 191              	.L24:
+ 192 019c 00000000 		.word	.LANCHOR0
+ 194              		.global	AHBPrescTable
+ 195              		.global	SystemCoreClock
+ 196              		.data
+ 197              		.align	2
+ 198              		.set	.LANCHOR0,. + 0
+ 201              	AHBPrescTable:
+ 202 0000 00       		.byte	0
+ 203 0001 00       		.byte	0
+ 204 0002 00       		.byte	0
+ 205 0003 00       		.byte	0
+ 206 0004 00       		.byte	0
+ 207 0005 00       		.byte	0
+ 208 0006 00       		.byte	0
+ 209 0007 00       		.byte	0
+ 210 0008 01       		.byte	1
+ 211 0009 02       		.byte	2
+ 212 000a 03       		.byte	3
+ 213 000b 04       		.byte	4
+ 214 000c 06       		.byte	6
+ 215 000d 07       		.byte	7
+ 216 000e 08       		.byte	8
+ 217 000f 09       		.byte	9
+ 220              	SystemCoreClock:
+ 221 0010 007A030A 		.word	168000000
+ 222              		.ident	"GCC: (Linaro GCC 4.6-2011.10) 4.6.2 20111004 (prerelease)"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 system_stm32f4xx.c
+     /tmp/cc5q86Ah.s:15     .text:0000000000000000 $t
+     /tmp/cc5q86Ah.s:20     .text:0000000000000000 SystemInit
+     /tmp/cc5q86Ah.s:139    .text:0000000000000114 SystemCoreClockUpdate
+     /tmp/cc5q86Ah.s:192    .text:000000000000019c $d
+     /tmp/cc5q86Ah.s:201    .data:0000000000000000 AHBPrescTable
+     /tmp/cc5q86Ah.s:220    .data:0000000000000010 SystemCoreClock
+     /tmp/cc5q86Ah.s:197    .data:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

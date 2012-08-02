@@ -198,7 +198,7 @@ void assert_failed(uint8_t* file, uint32_t line)
 #endif
 
 /**
- * Stubs
+ * useless Stubs
  */
 void EVAL_AUDIO_TransferComplete_CallBack(uint32_t pBuffer, uint32_t Size) {
 }

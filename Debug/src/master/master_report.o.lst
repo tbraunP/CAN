@@ -1,0 +1,31 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"master_report.c"
+  14              		.global	allowReceptions
+  15              		.global	reportCreated
+  16              		.comm	report,96,4
+  17              		.data
+  20              	allowReceptions:
+  21 0000 01       		.byte	1
+  22              		.bss
+  25              	reportCreated:
+  26 0000 00       		.space	1
+  27              		.ident	"GCC: (Linaro GCC 4.6-2011.10) 4.6.2 20111004 (prerelease)"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 master_report.c
+     /tmp/cc3uwIAX.s:20     .data:0000000000000000 allowReceptions
+     /tmp/cc3uwIAX.s:25     .bss:0000000000000000 reportCreated
+                            *COM*:0000000000000060 report
+     /tmp/cc3uwIAX.s:26     .bss:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS
