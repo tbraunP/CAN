@@ -33,8 +33,7 @@
 #include "common/timer.h"
 #include "master/master_report.h"
 #include "master/master_io.h"
-#include "master/master_uart.h"
-#include "slave/slave_main.h"
+#include "util/uart.h"
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
@@ -170,7 +169,6 @@ uint8_t entry = 0;
 uint8_t led = 0;
 
 void CAN1_RX0_IRQHandler(void) {
-#ifdef MASTER
 	uint32_t timestamp = 1 + (TIM2->CNT);
 
 	// handle reception
@@ -179,7 +177,7 @@ void CAN1_RX0_IRQHandler(void) {
 
 	// sanity check if receptions during wait phase
 	if (allowReceptions == 0) {
-		UART_StrSend("Unexpected Reception aborting\r\n");
+		Q_UART_DMAsendZTString("Unexpected Reception aborting\r\n");
 		while (1)
 			;
 	}
@@ -209,7 +207,6 @@ void CAN1_RX0_IRQHandler(void) {
 		entry = 0;
 		allowReceptions = 0;
 	}
-#endif
 }
 #endif  /* USE_CAN1 */
 
@@ -221,7 +218,7 @@ void EXTI15_10_IRQHandler(void) {
 	// send messages
 	//canSendMessage();
 	EXTI_ClearITPendingBit(EXTI_Line15);
-	canGo = 1;
+	//canGo = 1;
 }
 
 void TIM2_IRQHandler(void) {

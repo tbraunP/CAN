@@ -8,7 +8,7 @@
 #include "master_main.h"
 #include "master_io.h"
 #include "common/timer.h"
-#include "master_uart.h"
+#include "../util/uart.h"
 #include "util/stm32f4_discovery.h"
 #include "master_report.h"
 #include "common/itoa.h"
@@ -48,9 +48,9 @@ void Delay2(void) {
 
 void master_main(void) {
 	Timer_init(1); // 1 s timeout and delay between transmissions
-	UART_init();
+	Q_UART_init();
 
-	UART_StrSend("# MasterNode up\n");
+	Q_UART_DMAsendZTString("# MasterNode up\n");
 
 #ifdef CALIBRATE_ONLY
 	calibrate();
@@ -65,7 +65,7 @@ void master_main(void) {
 		// wait for all message to be received
 		while (!reportCreated) {
 			if (overflow) {
-				UART_StrSend("# Experiment timeout\n");
+				Q_UART_DMAsendZTString("# Experiment timeout\n");
 				printReport();
 				while (1)
 					;
@@ -101,22 +101,21 @@ int run = 0;
 
 void printReport(void) {
 	for (int i = 0; i < MAXREPORTS; i++) {
-		UART_StrSend(itoa(run));
-		UART_StrSend(" ; ");
-		UART_StrSend(itoa(report[i].id));
-		UART_StrSend(" ; ");
-		UART_StrSend(itoa(report[i].time));
-		UART_StrSend(" ; ");
-		UART_StrSend(itoa(report[i].timeProc));
-		UART_StrSend(" ; ");
-		UART_StrSend("0x");
+		Q_UART_DMAsendZTString(itoa(run));
+		Q_UART_DMAsendZTString(" ; ");
+		Q_UART_DMAsendZTString(itoa(report[i].id));
+		Q_UART_DMAsendZTString(" ; ");
+		Q_UART_DMAsendZTString(itoa(report[i].time));
+		Q_UART_DMAsendZTString(" ; ");
+		Q_UART_DMAsendZTString(itoa(report[i].timeProc));
+		Q_UART_DMAsendZTString(" ; ");
+		Q_UART_DMAsendZTString("0x");
 		for (int j = 0; j < report[i].size; j++) {
-			char high[2] = { toHex(((report[i].payload[j]) >> 4) & 0xF), '0' };
-			UART_send(high,1);
-			char low[2] = { toHex(((report[i].payload[j])) & 0xF), '0' };
-			UART_send(low,1);
+			char high[3] = { toHex(((report[i].payload[j]) >> 4) & 0xF), toHex(
+					((report[i].payload[j])) & 0xF), '0' };
+			Q_UART_DMAsendZTString(high);
 		}
-		UART_StrSend("\n");
+		Q_UART_DMAsendZTString("\n");
 
 		// reset
 		report[i].id = 0;

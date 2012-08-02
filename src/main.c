@@ -3,9 +3,6 @@
 #include "master/master_io.h"
 #include "master/master_main.h"
 
-#include "slave/slave_io.h"
-#include "slave/slave_main.h"
-
 /* Private function prototypes -----------------------------------------------*/
 void NVIC_Config(void);
 void CAN_Config(void);
@@ -22,11 +19,7 @@ int main(void) {
 	/* NVIC configuration */
 	NVIC_Config();
 
-#ifdef MASTER
 	GPIO_Master_init();
-#else
-	GPIO_Slave_init();
-#endif
 
 	/* Configures LED 1..4 */
 	STM_EVAL_LEDInit(LED5);
@@ -41,16 +34,11 @@ int main(void) {
 	CAN_Config();
 
 	/* Infinite loop */
-#ifdef MASTER
 	master_main();
-#else
-	slave_main();
-#endif
-
 }
 
 /**
- * @brief  Configures the CAN.
+ * @brief  Configures the CAN. Using 500 kByte/s
  * @param  None
  * @retval None
  */
@@ -128,7 +116,6 @@ void CAN_Config(void) {
  * @retval None
  */
 void NVIC_Config(void) {
-#ifdef MASTER
 	NVIC_InitTypeDef NVIC_InitStructure;
 
 #ifdef  USE_CAN1 
@@ -141,7 +128,6 @@ void NVIC_Config(void) {
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-#endif
 }
 
 /**
