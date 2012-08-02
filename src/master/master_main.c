@@ -61,28 +61,28 @@ void master_main(void) {
 	while (1) {
 		Timer_startTimer();
 
-		while(overflow==0);
+		while (overflow == 0)
+			;
 
-		if(overflow){
-			/*
+		if (overflow) {
 			CanTxMsg message;
 			message.RTR = CAN_RTR_Data;
 			message.DLC = 4;
 			message.StdId = 1;
 			message.IDE = CAN_Id_Standard;
-			uint8_t data[8] = {'A','F','F','E', 'A','F','F','E'};
-			memcpy(message.Data, data, 8*sizeof(uint8_t));
-*/
-			//CAN_Transmit(CANx, &message);
+			uint8_t data[8] = { 'A', 'F', 'F', 'E', 'A', 'F', 'F', 'E' };
+			memcpy(message.Data, data, 8 * sizeof(uint8_t));
+
+			CAN_Transmit(CANx, &message);
 		}
 		// we don't need the timer any longer
 		Timer_stopTimer();
 		overflow = 0;
 
 		// toggle led
-		if(toggle==0){
+		if (toggle == 0) {
 			STM_EVAL_LEDOn(LED5);
-		}else{
+		} else {
 			STM_EVAL_LEDOff(LED5);
 		}
 		toggle = (toggle == 0) ? 1 : 0;
