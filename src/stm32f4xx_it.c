@@ -34,6 +34,7 @@
 #include "master/master_report.h"
 #include "master/master_io.h"
 #include "util/uart.h"
+#include "util/LED_Header.h"
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
@@ -165,50 +166,20 @@ void SysTick_Handler(void) {
  * @param  None
  * @retval None
  */
-uint8_t entry = 0;
-uint8_t led = 0;
+uint8_t ledToggle = 0;
 
 void CAN1_RX0_IRQHandler(void) {
-#if 0
-	uint32_t timestamp = 1 + (TIM2->CNT);
-
 	// handle reception
 	CanRxMsg RxMessage;
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
-	// sanity check if receptions during wait phase
-	if (allowReceptions == 0) {
-		Q_UART_DMAsendZTString("Unexpected Reception aborting\r\n");
-		while (1)
-			;
+	// led toggle
+	if (ledToggle == 0) {
+		STM_EVAL_LEDOn(LED_BLUE);
+	} else {
+		STM_EVAL_LEDOff(LED_BLUE);
 	}
-
-	// signalize reception
-	LED_Display(led);
-	if (led++ >= 4)
-		led = 0;
-
-	// store report
-	report[entry].id = RxMessage.StdId;
-	report[entry].time = timestamp;
-	report[entry].size = RxMessage.DLC;
-
-	for (int i = 0; i < RxMessage.DLC; i++) {
-		report[entry].payload[i] = RxMessage.Data[i];
-	}
-
-	// after processing
-	uint32_t timestamp2 = 1 + TIM2->CNT; // now calc time as timestamp2*(1/timerCLK)
-	report[entry].timeProc = timestamp2;
-
-	// check if cycle has been finished -> transmit report
-	++entry;
-	if (entry == MAXREPORTS) {
-		reportCreated = 1;
-		entry = 0;
-		allowReceptions = 0;
-	}
-#endif
+	ledToggle = (ledToggle == 0) ? 1 : 0;
 }
 #endif  /* USE_CAN1 */
 
@@ -226,7 +197,7 @@ void EXTI15_10_IRQHandler(void) {
 void TIM2_IRQHandler(void) {
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	overflow = 1;
-	STM_EVAL_LEDOn(LED6);
+	//STM_EVAL_LEDOn(LED_BLUE);
 }
 
 

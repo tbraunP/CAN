@@ -31,7 +31,7 @@ int main(void) {
 	STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_GPIO);
 
 	/* CAN configuration */
-	//CAN_Config();
+	CAN_Config();
 
 	/* Infinite loop */
 	master_main();

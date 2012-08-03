@@ -11,6 +11,7 @@
 #include "common/timer.h"
 #include "../util/uart.h"
 #include "util/stm32f4_discovery.h"
+#include "util/LED_Header.h"
 #include "master_report.h"
 #include "common/itoa.h"
 #include "common/hex.h"
@@ -49,11 +50,11 @@ void Delay2(void) {
 
 void master_main(void) {
 	uint8_t toggle = 0;
-	STM_EVAL_LEDOn(LED3);
+	STM_EVAL_LEDOn(LED_RED);
 	Timer_init(1); // 1 s timeout and delay between transmissions
 	Q_UART_init();
 
-	Q_UART_DMAsendZTString("# MasterNode up\n");
+	Q_UART_DMAsendZTString("# TTCAN Node up\n");
 
 #ifdef CALIBRATE_ONLY
 	calibrate();
@@ -64,30 +65,18 @@ void master_main(void) {
 		while (overflow == 0)
 			;
 
-		if (overflow) {
-			CanTxMsg message;
-			message.RTR = CAN_RTR_Data;
-			message.DLC = 4;
-			message.StdId = 1;
-			message.IDE = CAN_Id_Standard;
-			uint8_t data[8] = { 'A', 'F', 'F', 'E', 'A', 'F', 'F', 'E' };
-			memcpy(message.Data, data, 8 * sizeof(uint8_t));
 
-			CAN_Transmit(CANx, &message);
-		}
 		// we don't need the timer any longer
 		Timer_stopTimer();
 		overflow = 0;
 
 		// toggle led
 		if (toggle == 0) {
-			STM_EVAL_LEDOn(LED5);
+			STM_EVAL_LEDOn(LED_RED);
 		} else {
-			STM_EVAL_LEDOff(LED5);
+			STM_EVAL_LEDOff(LED_RED);
 		}
 		toggle = (toggle == 0) ? 1 : 0;
-
-		STM_EVAL_LEDOn(LED4);
 	}
 #endif
 }
