@@ -1,0 +1,6 @@
+target extended localhost:4242
+load 
+break main
+break WWDG_IRQHandler
+continue
+
