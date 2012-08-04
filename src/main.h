@@ -30,7 +30,7 @@
 #define __MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
+#include <stm32f4xx.h>
 //#include "stm324xg_eval.h"
 #include "util/stm32f4_discovery.h"
 

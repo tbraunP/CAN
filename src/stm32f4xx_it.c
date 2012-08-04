@@ -28,6 +28,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdint.h>
+#include <stdio.h>
+
 #include "main.h"
 #include "config.h"
 #include "common/timer.h"
@@ -38,6 +41,8 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
+
+#include "ttcan/ttcan.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
  * @{
@@ -167,11 +172,25 @@ void SysTick_Handler(void) {
  * @retval None
  */
 uint8_t ledToggle = 0;
+uint16_t last = 0;
 
 void CAN1_RX0_IRQHandler(void) {
 	// handle reception
+	uint16_t timeStamp;
+	uint16_t diff;
 	CanRxMsg RxMessage;
-	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
+	TTCAN_Receive(CAN1, CAN_FIFO0, &RxMessage, &timeStamp);
+
+	if(timeStamp < last){
+		diff = 0xFFFF - last + timeStamp;
+	}else{
+		diff = timeStamp -last;
+	}
+
+	// output
+	char message[40];
+	snprintf(message,40, "Frame %d at %d ! Diff: %d\r\n", (int) RxMessage.StdId, (int) timeStamp, (int) diff);
+	Q_UART_DMAsendZTString(message);
 
 	// led toggle
 	if (ledToggle == 0) {
@@ -180,6 +199,8 @@ void CAN1_RX0_IRQHandler(void) {
 		STM_EVAL_LEDOff(LED_BLUE);
 	}
 	ledToggle = (ledToggle == 0) ? 1 : 0;
+	last = timeStamp;
+
 }
 #endif  /* USE_CAN1 */
 

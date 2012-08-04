@@ -71,6 +71,7 @@ void CAN_Config(void) {
 	CAN_DeInit(CANx);
 
 	/* CAN cell init */
+	CAN_StructInit(&CAN_InitStructure);
 	CAN_InitStructure.CAN_TTCM = DISABLE;
 	CAN_InitStructure.CAN_ABOM = DISABLE;
 	CAN_InitStructure.CAN_AWUM = DISABLE;
@@ -81,6 +82,11 @@ void CAN_Config(void) {
 	//CAN_InitStructure.CAN_Mode = CAN_Mode_LoopBack;
 	CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
 	CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
+
+	// Enable TTCAN mode, disable retransmission
+	CAN_InitStructure.CAN_TTCM = ENABLE;
+	CAN_InitStructure.CAN_NART = ENABLE;
+
 
 	// 500 kB/s bei 42 MHz APB1 Clock
 	CAN_InitStructure.CAN_BS1 = CAN_BS1_6tq; // 5
