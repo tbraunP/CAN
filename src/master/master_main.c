@@ -50,7 +50,7 @@ void Delay2(void) {
 void master_main(void) {
 	uint8_t toggle = 0;
 	STM_EVAL_LEDOn(LED3);
-	Timer_init(1); // 1 s timeout and delay between transmissions
+	Timer_init(1000); // 1 s timeout and delay between transmissions
 	Q_UART_init();
 
 	Q_UART_DMAsendZTString("# MasterNode up\n");
