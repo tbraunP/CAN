@@ -216,9 +216,25 @@ void EXTI15_10_IRQHandler(void) {
 }
 
 void TIM2_IRQHandler(void) {
-	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-	overflow = 1;
-	//STM_EVAL_LEDOn(LED_BLUE);
+	static uint8_t toggle = 0;
+
+	if(TIM2->SR & TIM_IT_Update){
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+		overflow = 1;
+		return;
+	}
+
+	// Compare Interrupt
+	if(TIM2->SR & TIM_IT_CC1){
+		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
+		if(toggle){
+			STM_EVAL_LEDOn(LED_GREEN);
+		}else{
+			STM_EVAL_LEDOff(LED_GREEN);
+		}
+		toggle = ~toggle;
+	}
+	//
 }
 
 

@@ -24,7 +24,8 @@ void Timer_init(int seconddev) {
 	// timer clock -> (SystemCoreClock/2) MHz -> ((SystemCoreClock/2)/8) s
 	TIM_TimeBaseInitStruct.TIM_Period = ((SystemCoreClock/2)/8);
 #else
-	TIM_TimeBaseInitStruct.TIM_Period = (uint32_t) (SystemCoreClock / 2) / seconddev;
+	TIM_TimeBaseInitStruct.TIM_Period = (uint32_t) (SystemCoreClock / 2)
+			/ seconddev;
 #endif
 	// prescaler - none, use full speed (SystemCoreClock/2)
 	TIM_TimeBaseInitStruct.TIM_Prescaler = 0;
@@ -32,6 +33,15 @@ void Timer_init(int seconddev) {
 	//TIM_TimeBaseInitStruct.TIM_Prescaler = (uint16_t) ((SystemCoreClock / 2) / 10000000) - 1;
 	TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStruct);
+
+	// Output Compare
+	TIM_OCInitTypeDef TIM_OCInitStruct;
+	TIM_OCStructInit(&TIM_OCInitStruct);
+	TIM_OCInitStruct.TIM_Pulse = TIM_TimeBaseInitStruct.TIM_Period / 2;
+	TIM_OC1Init(TIM2, &TIM_OCInitStruct);
+
+	TIM_ClearITPendingBit(TIM2, TIM_IT_CC1 );
+	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
 
 	// Enable overflow interrupt
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update );
