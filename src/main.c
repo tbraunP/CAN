@@ -112,6 +112,10 @@ void CAN_Config(void) {
 
 	/* Enable FIFO 0 message pending Interrupt */
 	CAN_ITConfig(CANx, CAN_IT_FMP0, ENABLE);
+	CAN_ITConfig(CANx, CAN_IT_WKU, ENABLE);
+
+	// CAN Sleep Mode if no transmission
+	CAN1->MCR |= 0x2;
 }
 
 /**
@@ -128,6 +132,14 @@ void NVIC_Config(void) {
 	NVIC_InitStructure.NVIC_IRQChannel = CAN2_RX0_IRQn;
 #endif /* USE_CAN1 */
 
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+
+	// status change event
+	NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;

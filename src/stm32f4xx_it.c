@@ -171,26 +171,34 @@ void SysTick_Handler(void) {
  * @param  None
  * @retval None
  */
-uint8_t ledToggle = 0;
+
 uint16_t last = 0;
+int vv = 0;
 
 void CAN1_RX0_IRQHandler(void) {
+	static uint8_t ledToggle = 0;
+
 	// handle reception
 	uint16_t timeStamp;
 	uint16_t diff;
 	CanRxMsg RxMessage;
 	TTCAN_Receive(CAN1, CAN_FIFO0, &RxMessage, &timeStamp);
+	STM_EVAL_LEDOn(LED_ORANGE);
 
-	if(timeStamp < last){
+	if (timeStamp < last) {
 		diff = 0xFFFF - last + timeStamp;
-	}else{
-		diff = timeStamp -last;
+	} else {
+		diff = timeStamp - last;
 	}
 
 	// output
-	char message[40];
-	snprintf(message,40, "Frame %d at %d ! Diff: %d\r\n", (int) RxMessage.StdId, (int) timeStamp, (int) diff);
-	Q_UART_DMAsendZTString(message);
+	if(vv<40){
+		char message[40];
+		snprintf(message, 40, "Frame %d at %d ! Diff: %d\r\n",
+				(int) RxMessage.StdId, (int) timeStamp, (int) diff);
+		Q_UART_DMAsendZTString(message);
+		++vv;
+	}
 
 	// led toggle
 	if (ledToggle == 0) {
@@ -211,25 +219,25 @@ void CAN1_RX0_IRQHandler(void) {
 void EXTI15_10_IRQHandler(void) {
 	// send messages
 	//canSendMessage();
-	EXTI_ClearITPendingBit(EXTI_Line15);
+	EXTI_ClearITPendingBit(EXTI_Line15 );
 	//canGo = 1;
 }
 
 void TIM2_IRQHandler(void) {
 	static uint8_t toggle = 0;
 
-	if(TIM2->SR & TIM_IT_Update){
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+	if (TIM2 ->SR & TIM_IT_Update ) {
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update );
 		overflow = 1;
 		return;
 	}
 
 	// Compare Interrupt
-	if(TIM2->SR & TIM_IT_CC1){
-		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
-		if(toggle){
+	if (TIM2 ->SR & TIM_IT_CC1 ) {
+		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1 );
+		if (toggle) {
 			STM_EVAL_LEDOn(LED_GREEN);
-		}else{
+		} else {
 			STM_EVAL_LEDOff(LED_GREEN);
 		}
 		toggle = ~toggle;
@@ -237,16 +245,34 @@ void TIM2_IRQHandler(void) {
 	//
 }
 
+void CAN1_SCE_IRQHandler(void) {
+	static uint8_t toggle = 0;
+
+	if (CAN1 ->MSR & CAN_MSR_WKUI ) {
+		CAN_ITConfig(CANx, CAN_IT_WKU, DISABLE);
+		CAN1 ->MSR |= (CAN_MSR_WKUI );
+		CAN1 ->MCR &= ~(0x2);
+
+		Q_UART_DMAsendZTString("WAKEUP\r\n");
+		//if (toggle) {
+		//STM_EVAL_LEDOn(LED_ORANGE);
+		//} else {
+		//	STM_EVAL_LEDOff(LED_ORANGE);
+		//}
+		toggle = ~toggle;
+	}
+//
+}
 
 void DMA1_Stream6_IRQHandler() {
-        /* Test on DMA Stream Transfer Complete interrupt */
-        if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6) == SET) {
-                /* Clear DMA Stream Transfer Complete interrupt pending bit */
-                DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
+	/* Test on DMA Stream Transfer Complete interrupt */
+	if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6 ) == SET) {
+		/* Clear DMA Stream Transfer Complete interrupt pending bit */
+		DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6 );
 
-                // handle request
-                Q_UART_DMA_TXComplete();
-        }
+		// handle request
+		Q_UART_DMA_TXComplete();
+	}
 }
 
 /**
