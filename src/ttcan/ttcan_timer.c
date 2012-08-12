@@ -22,8 +22,7 @@ void TTCAN_Timer_init(void) {
 
 	// prescaler - none, use full speed (SystemCoreClock/2)
 	TTCAN_TIM_TimeBaseInitStruct.TIM_Prescaler = 0;
-	// 10000 khz
-	//TIM_TimeBaseInitStruct.TIM_Prescaler = (uint16_t) ((SystemCoreClock / 2) / 10000000) - 1;
+
 	TTCAN_TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInit(TIM1, &TTCAN_TIM_TimeBaseInitStruct);
 

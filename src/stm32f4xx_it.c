@@ -264,6 +264,22 @@ void CAN1_SCE_IRQHandler(void) {
 //
 }
 
+
+// Timer1
+void TIM1_UP_TIM10_IRQHandler(void){
+	if (TIM1 ->SR & TIM_IT_Update ) {
+		TIM_ClearITPendingBit(TIM1, TIM_IT_Update );
+	}
+}
+
+void TIM1_CC_IRQHandler(void){
+	if (TIM1 ->SR & TIM_IT_CC1 ) {
+		TIM_ClearITPendingBit(TIM1, TIM_IT_CC1 );
+
+	}
+}
+
+
 void DMA1_Stream6_IRQHandler() {
 	/* Test on DMA Stream Transfer Complete interrupt */
 	if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6 ) == SET) {
