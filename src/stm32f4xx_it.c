@@ -250,8 +250,8 @@ void CAN1_SCE_IRQHandler(void) {
 
 	if (CAN1 ->MSR & CAN_MSR_WKUI ) {
 		CAN_ITConfig(CANx, CAN_IT_WKU, DISABLE);
-		CAN1 ->MSR |= (CAN_MSR_WKUI );
-		CAN1 ->MCR &= ~(0x2);
+		//CAN1 ->MSR |= (CAN_MSR_WKUI );
+		//CAN1 ->MCR &= ~(0x2);
 
 		Q_UART_DMAsendZTString("WAKEUP\r\n");
 		//if (toggle) {

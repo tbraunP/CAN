@@ -55,7 +55,7 @@ void master_main(void) {
 	Q_UART_init();
 
 	Q_UART_DMAsendZTString("# TTCAN Node up\n");
-
+	Info_printFreq();
 #ifdef CALIBRATE_ONLY
 	calibrate();
 #else

@@ -52,8 +52,8 @@ void CAN_Config(void) {
 	RCC_AHB1PeriphClockCmd(CAN_GPIO_CLK, ENABLE);
 
 	/* Connect CAN pins to AF9 */
-	GPIO_PinAFConfig(CAN_GPIO_PORT, CAN_RX_SOURCE, CAN_AF_PORT);
-	GPIO_PinAFConfig(CAN_GPIO_PORT, CAN_TX_SOURCE, CAN_AF_PORT);
+	GPIO_PinAFConfig(CAN_GPIO_PORT, CAN_RX_SOURCE, CAN_AF_PORT );
+	GPIO_PinAFConfig(CAN_GPIO_PORT, CAN_TX_SOURCE, CAN_AF_PORT );
 
 	/* Configure CAN RX and TX pins */
 	GPIO_InitStructure.GPIO_Pin = CAN_RX_PIN | CAN_TX_PIN;
@@ -68,7 +68,7 @@ void CAN_Config(void) {
 	RCC_APB1PeriphClockCmd(CAN_CLK, ENABLE);
 
 	/* CAN register init */
-	CAN_DeInit(CANx);
+	CAN_DeInit(CANx );
 
 	/* CAN cell init */
 	CAN_StructInit(&CAN_InitStructure);
@@ -86,7 +86,7 @@ void CAN_Config(void) {
 	// Enable TTCAN mode, disable retransmission
 	CAN_InitStructure.CAN_TTCM = ENABLE;
 	CAN_InitStructure.CAN_NART = ENABLE;
-
+	CAN_InitStructure.CAN_AWUM = ENABLE;
 
 	// 500 kB/s bei 42 MHz APB1 Clock
 	CAN_InitStructure.CAN_BS1 = CAN_BS1_6tq; // 5
@@ -115,7 +115,7 @@ void CAN_Config(void) {
 	CAN_ITConfig(CANx, CAN_IT_WKU, ENABLE);
 
 	// CAN Sleep Mode if no transmission
-	CAN1->MCR |= 0x2;
+	CAN1 ->MCR |= 0x2;
 }
 
 /**
@@ -136,7 +136,6 @@ void NVIC_Config(void) {
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-
 
 	// status change event
 	NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
