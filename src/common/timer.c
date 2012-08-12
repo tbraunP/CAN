@@ -24,6 +24,7 @@ void Timer_init(int seconddev) {
 	// timer clock -> (SystemCoreClock/2) MHz -> ((SystemCoreClock/2)/8) s
 	TIM_TimeBaseInitStruct.TIM_Period = ((SystemCoreClock/2)/8);
 #else
+	// ABP1 Prescaler auf 4 gesetzt, nach S. 86 doppelter Takt am Timer also 84 MHz
 	TIM_TimeBaseInitStruct.TIM_Period = (uint32_t) (SystemCoreClock / 2)
 			/ seconddev;
 #endif

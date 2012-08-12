@@ -22,7 +22,9 @@ void TTCAN_Timer_init(void) {
 	TTCAN_TIM_TimeBaseInitStruct.TIM_Period = (uint32_t) (0xFFFF);
 
 	// prescaler - none, use full speed (SystemCoreClock/2)
-	TTCAN_TIM_TimeBaseInitStruct.TIM_Prescaler = 42-1;
+
+	// ABP2 Prescaler auf 2 gesetzt, nach S. 86 doppelter Takt am Timer also 168 MHz
+	TTCAN_TIM_TimeBaseInitStruct.TIM_Prescaler = 336-1;
 	//TTCAN_TIM_TimeBaseInitStruct.TIM_Prescaler = 168;
 
 	TTCAN_TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
