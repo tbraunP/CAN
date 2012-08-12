@@ -2,6 +2,7 @@
 #include "config.h"
 #include "master/master_io.h"
 #include "master/master_main.h"
+#include "ttcan/ttcan.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void NVIC_Config(void);
@@ -92,7 +93,7 @@ void CAN_Config(void) {
 	CAN_InitStructure.CAN_BS1 = CAN_BS1_6tq; // 5
 	CAN_InitStructure.CAN_BS2 = CAN_BS2_7tq; // 6
 	CAN_InitStructure.CAN_Prescaler = 5 + 1; // + 1 since assignment in CAN Init uses CAN_InitStruct->CAN_Prescaler - 1
-	CAN_Init(CANx, &CAN_InitStructure);
+	TTCAN_Init(CANx, &CAN_InitStructure);
 
 	/* CAN filter init */
 #ifdef  USE_CAN1
@@ -113,6 +114,10 @@ void CAN_Config(void) {
 	/* Enable FIFO 0 message pending Interrupt */
 	CAN_ITConfig(CANx, CAN_IT_FMP0, ENABLE);
 	CAN_ITConfig(CANx, CAN_IT_WKU, ENABLE);
+
+	// Transmit finished
+	CAN_ClearITPendingBit(CANx, CAN_IT_TME);
+	CAN_ITConfig(CANx, CAN_IT_TME, ENABLE);
 
 	// CAN Sleep Mode if no transmission
 	CAN1 ->MCR |= 0x2;

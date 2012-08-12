@@ -21,7 +21,7 @@
  * @retval Constant indicates initialization succeed which will be
  *         CAN_InitStatus_Failed or CAN_InitStatus_Success.
  */
-uint8_t TTCAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct) {
+uint8_t TTCAN_Init(CAN_TypeDef* CAND, CAN_InitTypeDef* CAN_InitStruct) {
 	uint8_t InitStatus = CAN_InitStatus_Failed;
 	uint32_t wait_ack = 0x00000000;
 	/* Check the parameters */
@@ -42,87 +42,87 @@ uint8_t TTCAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct) {
 	TTCAN_Timer_init();
 
 	/* Exit from sleep mode */
-	CANx->MCR &= (~(uint32_t) CAN_MCR_SLEEP );
+	CAND->MCR &= (~(uint32_t) CAN_MCR_SLEEP );
 
 	/* Request initialisation */
-	CANx->MCR |= CAN_MCR_INRQ ;
+	CAND->MCR |= CAN_MCR_INRQ ;
 
 	// start timer
 	TTCAN_Timer_On();
 
 	/* Wait the acknowledge */
-	while (((CANx->MSR & CAN_MSR_INAK )!= CAN_MSR_INAK)&& (wait_ack != INAK_TIMEOUT)){
+	while (((CAND->MSR & CAN_MSR_INAK )!= CAN_MSR_INAK)&& (wait_ack != INAK_TIMEOUT)){
 	wait_ack++;
 	TIM1->CNT=0x0000; // reset timer to initial value
 }
 
 	/* Check acknowledge */
-	if ((CANx->MSR & CAN_MSR_INAK )!= CAN_MSR_INAK) {
+	if ((CAND->MSR & CAN_MSR_INAK )!= CAN_MSR_INAK) {
 		TTCAN_Timer_stopTimer();
 		InitStatus = CAN_InitStatus_Failed;
 	} else {
 		/* Set the time triggered communication mode */
 		if (CAN_InitStruct->CAN_TTCM == ENABLE) {
-			CANx->MCR |= CAN_MCR_TTCM;
+			CAND->MCR |= CAN_MCR_TTCM;
 		} else {
-			CANx->MCR &= ~(uint32_t) CAN_MCR_TTCM;
+			CAND->MCR &= ~(uint32_t) CAN_MCR_TTCM;
 		}
 
 		/* Set the automatic bus-off management */
 		if (CAN_InitStruct->CAN_ABOM == ENABLE) {
-			CANx->MCR |= CAN_MCR_ABOM;
+			CAND->MCR |= CAN_MCR_ABOM;
 		} else {
-			CANx->MCR &= ~(uint32_t) CAN_MCR_ABOM;
+			CAND->MCR &= ~(uint32_t) CAN_MCR_ABOM;
 		}
 
 		/* Set the automatic wake-up mode */
 		if (CAN_InitStruct->CAN_AWUM == ENABLE) {
-			CANx->MCR |= CAN_MCR_AWUM;
+			CAND->MCR |= CAN_MCR_AWUM;
 		} else {
-			CANx->MCR &= ~(uint32_t) CAN_MCR_AWUM;
+			CAND->MCR &= ~(uint32_t) CAN_MCR_AWUM;
 		}
 
 		/* Set the no automatic retransmission */
 		if (CAN_InitStruct->CAN_NART == ENABLE) {
-			CANx->MCR |= CAN_MCR_NART;
+			CAND->MCR |= CAN_MCR_NART;
 		} else {
-			CANx->MCR &= ~(uint32_t) CAN_MCR_NART;
+			CAND->MCR &= ~(uint32_t) CAN_MCR_NART;
 		}
 
 		/* Set the receive FIFO locked mode */
 		if (CAN_InitStruct->CAN_RFLM == ENABLE) {
-			CANx->MCR |= CAN_MCR_RFLM;
+			CAND->MCR |= CAN_MCR_RFLM;
 		} else {
-			CANx->MCR &= ~(uint32_t) CAN_MCR_RFLM;
+			CAND->MCR &= ~(uint32_t) CAN_MCR_RFLM;
 		}
 
 		/* Set the transmit FIFO priority */
 		if (CAN_InitStruct->CAN_TXFP == ENABLE) {
-			CANx->MCR |= CAN_MCR_TXFP;
+			CAND->MCR |= CAN_MCR_TXFP;
 		} else {
-			CANx->MCR &= ~(uint32_t) CAN_MCR_TXFP;
+			CAND->MCR &= ~(uint32_t) CAN_MCR_TXFP;
 		}
 
 		/* Set the bit timing register */
-		CANx->BTR = (uint32_t) ((uint32_t) CAN_InitStruct->CAN_Mode << 30)
+		CAND->BTR = (uint32_t) ((uint32_t) CAN_InitStruct->CAN_Mode << 30)
 				| ((uint32_t) CAN_InitStruct->CAN_SJW << 24)
 				| ((uint32_t) CAN_InitStruct->CAN_BS1 << 16)
 				| ((uint32_t) CAN_InitStruct->CAN_BS2 << 20)
 				| ((uint32_t) CAN_InitStruct->CAN_Prescaler - 1);
 
 		/* Request leave initialisation */
-		CANx->MCR &= ~(uint32_t) CAN_MCR_INRQ;
+		CAND->MCR &= ~(uint32_t) CAN_MCR_INRQ;
 
 		/* Wait the acknowledge */
 		wait_ack = 0;
 
-		while (((CANx->MSR & CAN_MSR_INAK )== CAN_MSR_INAK)&& (wait_ack != INAK_TIMEOUT)){
+		while (((CAND->MSR & CAN_MSR_INAK )== CAN_MSR_INAK)&& (wait_ack != INAK_TIMEOUT)){
 		wait_ack++;
 		TIM1->CNT=0x0000; // reset timer to initial value
 	}
 
 		/* ...and check acknowledged */
-		if ((CANx->MSR & CAN_MSR_INAK )== CAN_MSR_INAK) {
+		if ((CAND->MSR & CAN_MSR_INAK )== CAN_MSR_INAK) {
 			TTCAN_Timer_stopTimer();
 			InitStatus = CAN_InitStatus_Failed;
 		} else {

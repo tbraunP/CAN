@@ -12,6 +12,16 @@
 #include <stm32f4xx_can.h>
 #include "stm32f4xx_conf.h"
 
+/**
+ * @brief  Initializes the CAN peripheral according to the specified
+ *         parameters in the CAN_InitStruct.
+ * @param  CANx: where x can be 1 or 2 to select the CAN peripheral.
+ * @param  CAN_InitStruct: pointer to a CAN_InitTypeDef structure that contains
+ *         the configuration information for the CAN peripheral.
+ * @retval Constant indicates initialization succeed which will be
+ *         CAN_InitStatus_Failed or CAN_InitStatus_Success.
+ */
+uint8_t TTCAN_Init(CAN_TypeDef* CAND, CAN_InitTypeDef* CAN_InitStruct);
 
 /**
   * @brief  Receives a correct CAN frame.

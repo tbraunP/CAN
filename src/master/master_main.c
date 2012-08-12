@@ -15,8 +15,11 @@
 #include "master_report.h"
 #include "common/itoa.h"
 #include "common/hex.h"
+#include "util/info.h"
+#include <stm32f4xx_can.h>
 
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 void printReport(void);
@@ -51,7 +54,7 @@ void Delay2(void) {
 void master_main(void) {
 	uint8_t toggle = 0;
 	STM_EVAL_LEDOn(LED_RED);
-	Timer_init(1); // 1 s timeout and delay between transmissions
+	Timer_init(100); // 100 ms
 	Q_UART_init();
 
 	Q_UART_DMAsendZTString("# TTCAN Node up\n");
@@ -77,6 +80,18 @@ void master_main(void) {
 			STM_EVAL_LEDOff(LED_RED);
 		}
 		toggle = (toggle == 0) ? 1 : 0;
+
+		CanTxMsg message;
+		message.StdId = 0x03;
+		message.DLC = 0;
+		message.IDE = CAN_Id_Standard;
+		message.RTR = CAN_RTR_Remote;
+		uint8_t mailbox = CAN_Transmit(CAN1, &message);
+
+		// Debug message
+		char str[100];
+		snprintf(str,100, "Mailbox=%d\n", mailbox);
+		Q_UART_DMAsendZTString(str);
 	}
 #endif
 }

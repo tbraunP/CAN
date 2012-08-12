@@ -165,7 +165,6 @@ void SysTick_Handler(void) {
  {
  }*/
 
-#ifdef USE_CAN1
 /**
  * @brief  This function handles CAN1 RX0 request.
  * @param  None
@@ -180,6 +179,7 @@ void CAN1_RX0_IRQHandler(void) {
 
 	// handle reception
 	uint16_t timeStamp;
+	uint16_t localtime = TIM1->CNT;
 	uint16_t diff;
 	CanRxMsg RxMessage;
 	TTCAN_Receive(CAN1, CAN_FIFO0, &RxMessage, &timeStamp);
@@ -192,25 +192,43 @@ void CAN1_RX0_IRQHandler(void) {
 	}
 
 	// output
-	if(vv<40){
-		char message[40];
-		snprintf(message, 40, "Frame %d at %d ! Diff: %d\r\n",
-				(int) RxMessage.StdId, (int) timeStamp, (int) diff);
+	if (vv < 40) {
+		char message[80];
+		snprintf(message, 80, "Frame %d at %d (localtime %d)! Diff: %d\r\n",
+				(int) RxMessage.StdId, (int) timeStamp, (int)localtime, (int) diff);
 		Q_UART_DMAsendZTString(message);
 		++vv;
 	}
 
 	// led toggle
-	if (ledToggle == 0) {
-		STM_EVAL_LEDOn(LED_BLUE);
-	} else {
-		STM_EVAL_LEDOff(LED_BLUE);
-	}
-	ledToggle = (ledToggle == 0) ? 1 : 0;
+//	if (ledToggle == 0) {
+//		STM_EVAL_LEDOn(LED_BLUE);
+//	} else {
+//		STM_EVAL_LEDOff(LED_BLUE);
+//	}
+//	ledToggle = (ledToggle == 0) ? 1 : 0;
 	last = timeStamp;
 
 }
-#endif  /* USE_CAN1 */
+
+// Transmission performed
+void CAN1_TX_IRQHandler(void) {
+	static uint8_t toggle = 0;
+	if (CAN_GetITStatus(CANx, CAN_IT_TME ) == SET) {
+
+
+		if (toggle) {
+			STM_EVAL_LEDOn(LED_BLUE);
+		} else {
+			STM_EVAL_LEDOff(LED_BLUE);
+		}
+		toggle = ~toggle;
+
+		Q_UART_DMAsendZTString("Mailbox empty\r\n");
+		// last step, because the status of all boxes are resetted
+		CAN_ClearITPendingBit(CANx, CAN_IT_TME );
+	}
+}
 
 /**
  * @}
@@ -264,21 +282,27 @@ void CAN1_SCE_IRQHandler(void) {
 //
 }
 
-
 // Timer1
-void TIM1_UP_TIM10_IRQHandler(void){
+void TIM1_UP_TIM10_IRQHandler(void) {
+	static uint8_t toggle = 0;
+
 	if (TIM1 ->SR & TIM_IT_Update ) {
 		TIM_ClearITPendingBit(TIM1, TIM_IT_Update );
+		if (toggle) {
+			STM_EVAL_LEDOn(LED_ORANGE);
+		} else {
+			STM_EVAL_LEDOff(LED_ORANGE);
+		}
+		toggle = ~toggle;
 	}
 }
 
-void TIM1_CC_IRQHandler(void){
+void TIM1_CC_IRQHandler(void) {
 	if (TIM1 ->SR & TIM_IT_CC1 ) {
 		TIM_ClearITPendingBit(TIM1, TIM_IT_CC1 );
 
 	}
 }
-
 
 void DMA1_Stream6_IRQHandler() {
 	/* Test on DMA Stream Transfer Complete interrupt */

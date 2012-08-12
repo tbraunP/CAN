@@ -6,7 +6,7 @@
  */
 #include "stm32f4xx_conf.h"
 
-extern uint32_t SystemCoreClock;
+//extern uint32_t SystemCoreClock;
 
 void TTCAN_Timer_init(void) {
 	TIM_TimeBaseInitTypeDef TTCAN_TIM_TimeBaseInitStruct;
@@ -18,22 +18,24 @@ void TTCAN_Timer_init(void) {
 	TTCAN_TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;
 
 	// Timer overflow
-	TTCAN_TIM_TimeBaseInitStruct.TIM_Period = (uint32_t) (SystemCoreClock / 2);
+	//TTCAN_TIM_TimeBaseInitStruct.TIM_Period = (uint32_t) (SystemCoreClock / 2);
+	TTCAN_TIM_TimeBaseInitStruct.TIM_Period = (uint32_t) (0xFFFF);
 
 	// prescaler - none, use full speed (SystemCoreClock/2)
-	TTCAN_TIM_TimeBaseInitStruct.TIM_Prescaler = 0;
+	TTCAN_TIM_TimeBaseInitStruct.TIM_Prescaler = 42-1;
+	//TTCAN_TIM_TimeBaseInitStruct.TIM_Prescaler = 168;
 
 	TTCAN_TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseInit(TIM1, &TTCAN_TIM_TimeBaseInitStruct);
 
 	// Output Compare
-	TIM_OCInitTypeDef TIM_OCInitStruct;
-	TIM_OCStructInit(&TIM_OCInitStruct);
-	TIM_OCInitStruct.TIM_Pulse = TTCAN_TIM_TimeBaseInitStruct.TIM_Period / 2;
-	TIM_OC1Init(TIM1, &TIM_OCInitStruct);
-
-	TIM_ClearITPendingBit(TIM1, TIM_IT_CC1 );
-	TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);
+//	TIM_OCInitTypeDef TIM_OCInitStruct;
+//	TIM_OCStructInit(&TIM_OCInitStruct);
+//	TIM_OCInitStruct.TIM_Pulse = TTCAN_TIM_TimeBaseInitStruct.TIM_Period / 2;
+//	TIM_OC1Init(TIM1, &TIM_OCInitStruct);
+//
+//	TIM_ClearITPendingBit(TIM1, TIM_IT_CC1 );
+//	TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);
 
 	// Enable overflow interrupt
 	TIM_ClearITPendingBit(TIM1, TIM_IT_Update );
